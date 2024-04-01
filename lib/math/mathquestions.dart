@@ -18,7 +18,7 @@ class _MathQuState extends State<MathQu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFD27AFA),
+        backgroundColor:  Color(0xFFD27AFA),
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
