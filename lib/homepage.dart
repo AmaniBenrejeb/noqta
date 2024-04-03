@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mypfe/btm_nav_bar.dart';
 //import 'package:google_nav_bar/google_nav_bar.dart';
 //import 'package:mypfe/btmnavbar.dart';
 import 'package:mypfe/math/mathquestions.dart';
@@ -630,6 +631,7 @@ class _HomePageState extends State<HomePage> {
         ],
       ),
       //navigation bar
+      bottomNavigationBar: BottomNavBar(),
 
       
     );

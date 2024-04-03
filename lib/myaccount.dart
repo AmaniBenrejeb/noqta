@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:mypfe/answers.dart';
+import 'package:mypfe/btm_nav_bar.dart';
 
 
 import 'package:mypfe/settings.dart';
@@ -104,7 +105,8 @@ class _MyAccState extends State<MyAcc> {
           ),
         ],
       ),
-      //navigation bar
+      //
+      bottomNavigationBar: BottomNavBar(),
       
 
     );

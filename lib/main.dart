@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mypfe/btm_nav_bar.dart';
 
 
 import 'package:mypfe/homepage.dart';
@@ -45,20 +46,9 @@ class MyApp extends StatelessWidget {
           "/answ":(context) => const MyAnswers(),
           "/set":(context) => const MySettings(),
           "/chmath":(context) => const MathChoices(questionId:"YourQuestionIdHere" ),
-          "/addmath":(context) => const AddQuestionModal(),
-          
-          
-    
-
-
-
-          
-          
-          
-
-
-          
-          
-        });
+          "/addmath":(context) => const AddQuestionModal(),  
+        },
+        
+        );
   }
 }
