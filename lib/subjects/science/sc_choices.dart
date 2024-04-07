@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class MathChoices extends StatefulWidget {
+class ScChoices extends StatefulWidget {
   final String questionId;
   final Key? key;
 
-  const MathChoices({required this.questionId, this.key}) : super(key: key);
+  const ScChoices({required this.questionId, this.key}) : super(key: key);
 
   @override
-  _MathChoicesState createState() => _MathChoicesState();
+  _ScChoicesState createState() => _ScChoicesState();
 }
 
-class _MathChoicesState extends State<MathChoices> {
+class _ScChoicesState extends State<ScChoices> {
   late Stream<DocumentSnapshot<Map<String, dynamic>>> _questionStream;
   late Stream<QuerySnapshot<Map<String, dynamic>>> _choicesStream;
 
@@ -27,25 +27,25 @@ class _MathChoicesState extends State<MathChoices> {
 
   Future<void> _initializeData() async {
     // Récupérer l'ID de l'utilisateur actuellement connecté
-    //User? user = FirebaseAuth.instance.currentUser;
-    //String? userId = user?.uid;
+    User? user = FirebaseAuth.instance.currentUser;
+    String? userId = user?.uid;
 
     // Définir manuellement l'identifiant de l'utilisateur
-    String userId = 'amouna';
+    //String userId = 'amouna';
 
     // Vérifier l'existence de la question dans la collection 'Math'
     final mathSnapshot = await FirebaseFirestore.instance
-        .collection('Math')
+        .collection('Science')
         .doc(widget.questionId)
         .get();
     if (mathSnapshot.exists) {
       // Si la question existe dans la collection 'Math'
       _questionStream = FirebaseFirestore.instance
-          .collection('Math')
+          .collection('Science')
           .doc(widget.questionId)
           .snapshots();
       _choicesStream = FirebaseFirestore.instance
-          .collection('Math')
+          .collection('Science')
           .doc(widget.questionId)
           .collection('choices')
           .snapshots();
@@ -54,13 +54,13 @@ class _MathChoicesState extends State<MathChoices> {
       _questionStream = FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
-          .collection('question_added_math')
+          .collection('question_added_Sc')
           .doc(widget.questionId)
           .snapshots();
       _choicesStream = FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
-          .collection('question_added_math')
+          .collection('question_added_Sc')
           .doc(widget.questionId)
           .collection('choices')
           .snapshots();
@@ -71,7 +71,7 @@ class _MathChoicesState extends State<MathChoices> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color(0xFFD27AFA),
+        backgroundColor: const Color(0xFF79C5F7),
         automaticallyImplyLeading: false,
         title: Row(
            mainAxisAlignment: MainAxisAlignment.end, 
@@ -108,7 +108,7 @@ class _MathChoicesState extends State<MathChoices> {
                 padding: const EdgeInsets.all(16.0),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30),
-                  border: Border.all(color: const Color(0xFFD27AFA)),
+                  border: Border.all(color: const Color(0xFF79C5F7)),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -201,7 +201,7 @@ class _MathChoicesState extends State<MathChoices> {
                       onPressed: () {},
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color(0xFFD27AFA)),
+                            const Color(0xFF79C5F7)),
                       ),
                       child: const Text('إرسال',
                           style: TextStyle(

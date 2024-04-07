@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:mypfe/btm_nav_bar.dart';
 //import 'package:google_nav_bar/google_nav_bar.dart';
 //import 'package:mypfe/btmnavbar.dart';
-import 'package:mypfe/math/mathquestions.dart';
-import 'package:mypfe/science/sciencequestions.dart';
-import 'package:mypfe/geo/geoquestions.dart';
-import 'package:mypfe/history/historyquestions.dart';
-import 'package:mypfe/din/dinquestions.dart';
+import 'package:mypfe/subjects/math/mathquestions.dart';
+import 'package:mypfe/subjects/science/sciencequestions.dart';
+import 'package:mypfe/subjects/geo/geoquestions.dart';
+import 'package:mypfe/subjects/history/historyquestions.dart';
+import 'package:mypfe/subjects/din/dinquestions.dart';
 //import 'package:mypfe/myaccount.dart';
 
 

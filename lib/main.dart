@@ -1,21 +1,22 @@
 import 'package:flutter/material.dart';
-import 'package:mypfe/btm_nav_bar.dart';
+
 
 
 import 'package:mypfe/homepage.dart';
-import 'package:mypfe/math/addquestions.dart';
-import 'package:mypfe/math/mathchoices.dart';
-import 'package:mypfe/math/mathquestions.dart';
+import 'package:mypfe/subjects/math/add_ma_questions.dart';
+import 'package:mypfe/subjects/math/mathchoices.dart';
+import 'package:mypfe/subjects/math/mathquestions.dart';
 
 
-import 'package:mypfe/science/sciencequestions.dart';
-import 'package:mypfe/geo/geoquestions.dart';
-import 'package:mypfe/history/historyquestions.dart';
-import 'package:mypfe/din/dinquestions.dart';
-import 'package:mypfe/myaccount.dart';
-import 'package:mypfe/answers.dart';
-import 'package:mypfe/settings.dart';
+import 'package:mypfe/subjects/science/sciencequestions.dart';
+import 'package:mypfe/subjects/geo/geoquestions.dart';
+import 'package:mypfe/subjects/history/historyquestions.dart';
+import 'package:mypfe/subjects/din/dinquestions.dart';
+import 'package:mypfe/account/myaccount.dart';
+import 'package:mypfe/account/answers.dart';
+import 'package:mypfe/account/settings.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:mypfe/auth/login_screen.dart';
 import 'firebase_options.dart';
 
 void main() async  {
@@ -34,7 +35,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         debugShowCheckedModeBanner: false,
         theme: ThemeData.light(useMaterial3: true),
-        initialRoute: "/home",
+        initialRoute: "/login",
         routes: {
           "/home": (context) => const HomePage(),
           "/math": (context) => const MathQu(),
@@ -43,10 +44,11 @@ class MyApp extends StatelessWidget {
           "/history":(context) => const HiQu(),
           "/din":(context) => const DinQu(),
           "/acc":(context) => const MyAcc(),
-          "/answ":(context) => const MyAnswers(),
-          "/set":(context) => const MySettings(),
+          "/answ":(context) => const history(),
+          "/set":(context) => const UpdateData(),
           "/chmath":(context) => const MathChoices(questionId:"YourQuestionIdHere" ),
           "/addmath":(context) => const AddQuestionModal(),  
+          "/login":(context) => const Login_screen(), 
         },
         
         );

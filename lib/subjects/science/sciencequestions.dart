@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:mypfe/math/addquestions.dart';
-import 'package:mypfe/math/mathchoices.dart';
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mypfe/subjects/science/add_sc_questions.dart';
+import 'package:mypfe/subjects/science/sc_choices.dart';
 
-
-class MathQu extends StatefulWidget {
-  const MathQu({super.key});
+class ScQu extends StatefulWidget {
+  const ScQu({super.key});
 
   @override
-  State<MathQu> createState() => _MathQuState();
+  State<ScQu> createState() => _ScQuState();
 }
 
-class _MathQuState extends State<MathQu> {
+class _ScQuState extends State<ScQu> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:  Color(0xFFD27AFA),
+        backgroundColor:  Color(0xFF79C5F7),
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -44,7 +43,7 @@ class _MathQuState extends State<MathQu> {
                       context: context,
                       isScrollControlled: true,
                       builder: (BuildContext context) {
-                        return const AddQuestionModal();
+                        return const AddScQuestionModal();
                       },
                     );
                   },
@@ -54,7 +53,7 @@ class _MathQuState extends State<MathQu> {
             Container(
               padding: const EdgeInsets.all(4),
               child: Text(
-                'رياضيات',
+                'علوم',
                 style: GoogleFonts.radioCanada(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
@@ -88,7 +87,7 @@ class _MathQuState extends State<MathQu> {
           Expanded(
             child: Container(
               decoration: const BoxDecoration(
-                color: Color(0xFFD27AFA),
+                color: Color(0xFF79C5F7),
               ),
               child: Column(
                 children: [
@@ -121,7 +120,7 @@ class _MathQuState extends State<MathQu> {
                                   physics: const BouncingScrollPhysics(),
                                   child: StreamBuilder<QuerySnapshot>(
                                     stream: FirebaseFirestore.instance
-                                        .collection('Math')
+                                        .collection('Science')
                                         .snapshots(),
                                     builder: (context, mathSnapshot) {
                                       if (mathSnapshot.connectionState ==
@@ -130,17 +129,17 @@ class _MathQuState extends State<MathQu> {
                                           child: CircularProgressIndicator(),
                                         );
                                       }
-                                      //final User? user = FirebaseAuth.instance.currentUser;
-                                      //final String? userId = user?.uid;
+                                      final User? user = FirebaseAuth.instance.currentUser;
+                                      final String? userId = user?.uid;
                                       List<QueryDocumentSnapshot> mathDocuments =
                                           mathSnapshot.data!.docs;
                                       
                                       return StreamBuilder<QuerySnapshot>(
                                         stream: FirebaseFirestore.instance
                                             .collection('Users')
-                                           // .doc(userId) 
-                                            .doc('amouna') // Remplacez user_id par l'ID de l'utilisateur actuel
-                                            .collection('question_added_math')
+                                            .doc(userId) 
+                                           // .doc('amouna') // Remplacez user_id par l'ID de l'utilisateur actuel
+                                            .collection('question_added_Sc')
                                             .snapshots(),
                                         builder: (context, userSnapshot) {
                                           if (userSnapshot.connectionState ==
@@ -192,7 +191,7 @@ class _MathQuState extends State<MathQu> {
                                                           context,
                                                           MaterialPageRoute(
                                                             builder: (context) =>
-                                                                MathChoices(
+                                                                ScChoices(
                                                               questionId:
                                                                   questionId,
                                                             ),

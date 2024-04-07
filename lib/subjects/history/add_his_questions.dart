@@ -2,16 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-//import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
-class AddQuestionModal extends StatefulWidget {
-  const AddQuestionModal({super.key});
+class AddHiQuestionModal extends StatefulWidget {
+  const AddHiQuestionModal({super.key});
 
   @override
-  State<AddQuestionModal> createState() => _AddQuestionModalState();
+  State<AddHiQuestionModal> createState() => _AddHiQuestionModalState();
 }
 
-class _AddQuestionModalState extends State<AddQuestionModal> {
+class _AddHiQuestionModalState extends State<AddHiQuestionModal> {
   final TextEditingController questionController = TextEditingController();
   final TextEditingController choice1Controller = TextEditingController();
   final TextEditingController choice2Controller = TextEditingController();
@@ -22,7 +22,7 @@ class _AddQuestionModalState extends State<AddQuestionModal> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: const Color.fromARGB(255, 231, 198, 248),
+        backgroundColor: const Color(0xFFFED159),
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -79,7 +79,7 @@ class _AddQuestionModalState extends State<AddQuestionModal> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(
-                      color: Color(0xFFD27AFA)), // Set the desired border color
+                      color: Color(0xFFFED159)), // Set the desired border color
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -103,7 +103,7 @@ class _AddQuestionModalState extends State<AddQuestionModal> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(
-                      color: Color(0xFFD27AFA)), // Set the desired border color
+                      color: Color(0xFFFED159)), // Set the desired border color
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -127,7 +127,7 @@ class _AddQuestionModalState extends State<AddQuestionModal> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(
-                      color: Color(0xFFD27AFA)), // Set the desired border color
+                      color: Color(0xFFFED159)), // Set the desired border color
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -151,7 +151,7 @@ class _AddQuestionModalState extends State<AddQuestionModal> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(
-                      color: Color(0xFFD27AFA)), // Set the desired border color
+                      color: Color(0xFFFED159)), // Set the desired border color
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -175,7 +175,7 @@ class _AddQuestionModalState extends State<AddQuestionModal> {
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(
-                      color: Color(0xFFD27AFA)), // Set the desired border color
+                      color: Color(0xFFFED159)), // Set the desired border color
                 ),
                 enabledBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
@@ -194,7 +194,7 @@ class _AddQuestionModalState extends State<AddQuestionModal> {
               },
               style: ButtonStyle(
                 backgroundColor:
-                    MaterialStateProperty.all<Color>(const Color(0xFFD27AFA)),
+                    MaterialStateProperty.all<Color>(const Color(0xFFFED159)),
               ),
               child: const Text('حفظ',
                   style: TextStyle(
@@ -233,14 +233,13 @@ class _AddQuestionModalState extends State<AddQuestionModal> {
         },
       );
     } else {
-      //final User? user = FirebaseAuth.instance.currentUser;
-      //final String? userId = user?.uid;
-      String userId =
-          'amouna'; // Vous devez remplacer cela par la vraie ID de l'utilisateur
+      final User? user = FirebaseAuth.instance.currentUser;
+      final String? userId = user?.uid;
+    //  String userId ='amouna'; // Vous devez remplacer cela par la vraie ID de l'utilisateur
       FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
-          .collection('question_added_math')
+          .collection('question_added_his')
           .add({
         'question': questionController.text,
         'correct_answer': correctAnswerController.text,
