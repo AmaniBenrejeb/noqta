@@ -1,11 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mypfe/account/answers.dart';
-
 import 'package:mypfe/btm_nav_bar.dart';
-
 import 'package:mypfe/account/settings.dart';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mypfe/auth/login_screen.dart';
 

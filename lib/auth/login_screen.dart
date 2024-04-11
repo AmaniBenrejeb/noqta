@@ -3,18 +3,13 @@ import 'package:mypfe/homepage.dart';
 import '../backgrounds/login.dart';
 import 'createAccount.dart';
 import '../additional/resetpassword.dart';
-
-
-//import 'package:bubble/screens/history.dart';
-//import 'package:bubble/screens/updateData.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
-// import 'firebase_options.dart';
+
 class Login_screen extends StatefulWidget {
   const Login_screen({Key? key}) : super(key: key);
 
@@ -26,6 +21,7 @@ class _Login_screenState extends State<Login_screen> {
   String? email;
   String? f_name;
   String? password;
+  bool _obscurePassword = true;
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -78,27 +74,17 @@ class _Login_screenState extends State<Login_screen> {
                                   textAlign: TextAlign.right,
                                   cursorHeight: 25,
                                   decoration: InputDecoration(
-                                    prefixIconConstraints: BoxConstraints(
-                                        minHeight: 30, minWidth: 30),
+                                  
                                     hintText: "البريد الإلكتروني",
                                     hintStyle: TextStyle(
                                         color:
                                             Color.fromARGB(255, 163, 163, 163)
                                                 .withOpacity(0.7)),
-                                    prefixIcon: Padding(
-                                      padding: const EdgeInsets.only(right: 8),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Color(0xFFAB9EC3)
-                                              .withOpacity(0.7),
-                                        ),
-                                        child: Icon(
-                                          Icons.mail_outline,
-                                          color: Colors.white,
-                                          size: 18,
-                                        ),
-                                      ),
+                                                 contentPadding: EdgeInsets.only(left: 8, top: 8, bottom: 8),
+                                    suffixIcon: Icon(
+                                      Icons.mail_outline,
+                                      color:  Color.fromARGB(255, 149, 124, 173),
+                                     
                                     ),
                                     border: InputBorder.none,
                                   ),
@@ -121,37 +107,39 @@ class _Login_screenState extends State<Login_screen> {
                             color: Color(0xFFEFE5FF),
                           ),
                           child: Padding(
-                            padding: EdgeInsets.only(left: 7),
+                            padding: const EdgeInsets.only(left: 7),
                             child: Center(
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 10),
                                 child: TextFormField(
+                                  
                                   cursorHeight: 25,
+                                  obscureText: _obscurePassword,
                                   textAlign: TextAlign.right,
                                   decoration: InputDecoration(
+                                    
                                     hintText: "كلمة السّر",
                                     hintStyle: TextStyle(
                                         color:
                                             Color.fromARGB(255, 163, 163, 163)
                                                 .withOpacity(0.7)),
-                                    prefixIconConstraints: BoxConstraints(
-                                        minHeight: 30, minWidth: 30),
-                                    prefixIcon: Padding(
-                                      padding: const EdgeInsets.only(right: 8),
-                                      child: Container(
-                                        decoration: BoxDecoration(
-                                          shape: BoxShape.circle,
-                                          color: Color(0xFFAB9EC3)
-                                              .withOpacity(0.7),
-                                        ),
-                                        child: Icon(
-                                          Icons.lock_outline,
-                                          color: Colors.white,
-                                          size: 18,
-                                        ),
-                                      ),
+                                   contentPadding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
+                                    suffixIcon: IconButton(
+                                      icon: Icon(_obscurePassword
+                                          ? Icons.lock_outline
+                                          : Icons.lock_open_outlined),
+                                      color:
+                                          Color.fromARGB(255, 149, 124, 173),
+                                      onPressed: () {
+                                        setState(() {
+                                          _obscurePassword =
+                                              !_obscurePassword; 
+                                        });
+                                      },
                                     ),
+                                                          
                                     border: InputBorder.none,
+                                    
                                   ),
                                   autofocus: false,
                                   onChanged: (value) {
@@ -217,15 +205,14 @@ class _Login_screenState extends State<Login_screen> {
                                       builder: (context) => HomePage(),
                                     ),
                                   );
-                               
-                                    AnimatedSnackBar.material(
-                                  ' متصل $displayName المستخدم',
-                                  type: AnimatedSnackBarType.success,
-                                  duration: Duration(seconds: 6),
-                                  mobileSnackBarPosition:
-                                      MobileSnackBarPosition.bottom,
-                                ).show(context);
-                                  
+
+                                  AnimatedSnackBar.material(
+                                    ' متصل $displayName المستخدم',
+                                    type: AnimatedSnackBarType.success,
+                                    duration: Duration(seconds: 6),
+                                    mobileSnackBarPosition:
+                                        MobileSnackBarPosition.bottom,
+                                  ).show(context);
                                 }
                               }).catchError((error) {
                                 print("Failed to fetch user data: $error");
@@ -240,7 +227,6 @@ class _Login_screenState extends State<Login_screen> {
                                   mobileSnackBarPosition:
                                       MobileSnackBarPosition.bottom,
                                 ).show(context);
-                                
                               } else if (ex.code == 'invalid-email') {
                                 AnimatedSnackBar.material(
                                   'البريد الإلكتروني غير صالح',

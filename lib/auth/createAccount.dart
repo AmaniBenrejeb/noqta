@@ -1,14 +1,13 @@
 import 'package:mypfe/homepage.dart';
-
 import '../backgrounds/login.dart';
 import 'package:mypfe/auth/login_screen.dart';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 class createAccount extends StatefulWidget {
   const createAccount({Key? key});
 
@@ -25,6 +24,7 @@ class _createAccountState extends State<createAccount> {
   var _emailController = TextEditingController();
   var _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool _obscurePassword = true;
   // bool _obscureText = true;
   // bool _isLoading = false;
 
@@ -90,21 +90,10 @@ class _createAccountState extends State<createAccount> {
                                           color:
                                               Color.fromARGB(255, 163, 163, 163)
                                                   .withOpacity(0.7)),
-                                      prefixIcon: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Color(0xFFAB9EC3)
-                                                .withOpacity(0.7),
-                                          ),
-                                          child: Icon(
-                                            Icons.person_outline_outlined,
-                                            color: Colors.white,
-                                            size: 18,
-                                          ),
-                                        ),
+                                      suffixIcon: Icon(
+                                        Icons.person_outline_outlined,
+                                        color:
+                                            Color.fromARGB(255, 149, 124, 173),
                                       ),
                                       border: InputBorder.none,
                                     ),
@@ -153,21 +142,10 @@ class _createAccountState extends State<createAccount> {
                                           color:
                                               Color.fromARGB(255, 163, 163, 163)
                                                   .withOpacity(0.7)),
-                                      prefixIcon: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Color(0xFFAB9EC3)
-                                                .withOpacity(0.7),
-                                          ),
-                                          child: Icon(
-                                            Icons.mail_outline,
-                                            color: Colors.white,
-                                            size: 18,
-                                          ),
-                                        ),
+                                      suffixIcon: Icon(
+                                        Icons.mail_outline,
+                                        color:
+                                            Color.fromARGB(255, 149, 124, 173),
                                       ),
                                       border: InputBorder.none,
                                     ),
@@ -214,23 +192,20 @@ class _createAccountState extends State<createAccount> {
                                           color:
                                               Color.fromARGB(255, 163, 163, 163)
                                                   .withOpacity(0.7)),
-                                      prefixIconConstraints: BoxConstraints(
-                                          minHeight: 30, minWidth: 30),
-                                      prefixIcon: Padding(
-                                        padding:
-                                            const EdgeInsets.only(right: 8),
-                                        child: Container(
-                                          decoration: BoxDecoration(
-                                            shape: BoxShape.circle,
-                                            color: Color(0xFFAB9EC3)
-                                                .withOpacity(0.7),
-                                          ),
-                                          child: Icon(
-                                            Icons.lock_outline,
-                                            color: Colors.white,
-                                            size: 18,
-                                          ),
-                                        ),
+                                      contentPadding: EdgeInsets.only(
+                                          left: 10, top: 10, bottom: 10),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(_obscurePassword
+                                            ? Icons.lock_outline
+                                            : Icons.lock_open_outlined),
+                                        color:
+                                            Color.fromARGB(255, 149, 124, 173),
+                                        onPressed: () {
+                                          setState(() {
+                                            _obscurePassword =
+                                                !_obscurePassword;
+                                          });
+                                        },
                                       ),
                                       border: InputBorder.none,
                                     ),
@@ -274,7 +249,8 @@ class _createAccountState extends State<createAccount> {
                                       SnackBar(
                                         backgroundColor: Color(0xFFA779F7),
                                         content: Row(
-                                          mainAxisAlignment: MainAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
                                           children: [
                                             Text(
                                                 'هذا البريد الإلكتروني مستخدم بالفعل'),

@@ -5,7 +5,6 @@ import 'package:mypfe/subjects/math/add_ma_questions.dart';
 import 'package:mypfe/subjects/math/mathchoices.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-
 class MathQu extends StatefulWidget {
   const MathQu({super.key});
 

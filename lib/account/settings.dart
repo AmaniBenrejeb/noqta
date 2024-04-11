@@ -17,10 +17,13 @@ class _UpdateDataState extends State<UpdateData> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   String? email;
   String? f_name;
   String? password;
-
+  bool _obscurePassword = true;
+  bool _obscurePassword1 = true;
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -77,7 +80,7 @@ class _UpdateDataState extends State<UpdateData> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text("إسم المستخدم",
+                      Text("إسم المستخدم الجديد",
                           textAlign: TextAlign.right,
                           style: GoogleFonts.radioCanada(
                             fontSize: 15,
@@ -97,7 +100,7 @@ class _UpdateDataState extends State<UpdateData> {
                         height: 46,
                         width: 370,
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 14),
+                          padding: const EdgeInsets.only(right: 10),
                           child: TextFormField(
                             textAlign: TextAlign.right,
                             controller: _usernameController,
@@ -106,7 +109,7 @@ class _UpdateDataState extends State<UpdateData> {
                                 fontSize: 17,
                                 fontWeight: FontWeight.w500),
                             decoration: InputDecoration(
-                              hintText: "إسم المستخدم",
+                              hintText: " إسم المستخدم الجديدة",
                               hintStyle: GoogleFonts.radioCanada(
                                   color: Color(0xFFF2E5FF),
                                   fontSize: 17,
@@ -159,7 +162,7 @@ class _UpdateDataState extends State<UpdateData> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text("البريد الإلكتروني ",
+                      Text(" البريد الإلكتروني الجديد",
                           textAlign: TextAlign.right,
                           style: GoogleFonts.radioCanada(
                             fontSize: 15,
@@ -188,7 +191,7 @@ class _UpdateDataState extends State<UpdateData> {
                                 fontSize: 17,
                                 fontWeight: FontWeight.w500),
                             decoration: InputDecoration(
-                              hintText: "البريد الإلكتروني ",
+                              hintText: "  البريد الإلكتروني الجديد",
                               hintStyle: GoogleFonts.radioCanada(
                                   color: Color(0xFFF2E5FF),
                                   fontSize: 17,
@@ -241,7 +244,90 @@ class _UpdateDataState extends State<UpdateData> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
-                      Text("كلمة السر    ",
+                      Text("كلمة السر الحالية",
+                          textAlign: TextAlign.right,
+                          style: GoogleFonts.radioCanada(
+                            fontSize: 15,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          )),
+                    ],
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.01),
+                Padding(
+                  padding: const EdgeInsets.only(right: 10),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Container(
+                        height: 46,
+                        width: 370,
+                        child: Padding(
+                          padding: const EdgeInsets.only(right: 14),
+                          child: TextFormField(
+                            textAlign: TextAlign.right,
+                            controller: _currentPasswordController,
+                            obscureText: _obscurePassword1, // Password field
+                            style: GoogleFonts.radioCanada(
+                                color: Colors.black,
+                                fontSize: 17,
+                                fontWeight: FontWeight.w500),
+                            decoration: InputDecoration(
+                              hintText: "كلمة السر الحالية",
+                              hintStyle: GoogleFonts.radioCanada(
+                                  color: Color(0xFFF2E5FF),
+                                  fontSize: 17,
+                                  fontWeight: FontWeight.w500),
+                              contentPadding: EdgeInsets.symmetric(
+                                  vertical: 11, horizontal: 20),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                borderSide: BorderSide(
+                                  color: Color(0xFFF2E5FF),
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(20.0),
+                                borderSide: BorderSide(
+                                  color: Color(0xFFF2E5FF),
+                                ),
+                              ),
+                              suffixIcon: Icon(Icons.lock_outline,
+                                  color: Color.fromARGB(255, 149, 124, 173)),
+                              prefixIcon: IconButton(
+                                icon: Icon(_obscurePassword1
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                color: Color.fromARGB(255, 149, 124, 173),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword1 =
+                                        !_obscurePassword1; // Toggle visibility
+                                  });
+                                },
+                              ),
+                            ),
+                            autofocus: false,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter current password';
+                              }
+                              return null;
+                            },
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: screenHeight * 0.02),
+                Padding(
+                  padding: const EdgeInsets.only(right: 25),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text("كلمة السر الجديدة    ",
                           textAlign: TextAlign.right,
                           style: GoogleFonts.radioCanada(
                             fontSize: 15,
@@ -265,12 +351,13 @@ class _UpdateDataState extends State<UpdateData> {
                           child: TextFormField(
                             textAlign: TextAlign.right,
                             controller: _passwordController,
+                            obscureText: _obscurePassword,
                             style: GoogleFonts.radioCanada(
                                 color: Colors.black,
                                 fontSize: 17,
                                 fontWeight: FontWeight.w500),
                             decoration: InputDecoration(
-                              hintText: "كلمة السر   ",
+                              hintText: " كلمة السر الجديدة  ",
                               hintStyle: GoogleFonts.radioCanada(
                                   color: Color(0xFFF2E5FF),
                                   fontSize: 17,
@@ -293,6 +380,18 @@ class _UpdateDataState extends State<UpdateData> {
                               ),
                               suffixIcon: Icon(Icons.lock_outline,
                                   color: Color.fromARGB(255, 149, 124, 173)),
+                              prefixIcon: IconButton(
+                                icon: Icon(_obscurePassword
+                                    ? Icons.visibility_off
+                                    : Icons.visibility),
+                                color: Color.fromARGB(255, 149, 124, 173),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscurePassword =
+                                        !_obscurePassword; // Toggle visibility
+                                  });
+                                },
+                              ),
                             ),
                             autofocus: false,
                             validator: (value) {
@@ -314,7 +413,7 @@ class _UpdateDataState extends State<UpdateData> {
                     ],
                   ),
                 ),
-                SizedBox(height: screenHeight * 0.3),
+                SizedBox(height: screenHeight * 0.18),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
                     minimumSize: Size(320, 50),
@@ -326,7 +425,8 @@ class _UpdateDataState extends State<UpdateData> {
                     if (user != null) {
                       if (_usernameController.text.isEmpty ||
                           _emailController.text.isEmpty ||
-                          _passwordController.text.isEmpty) {
+                          _passwordController.text.isEmpty ||
+                          _currentPasswordController.text.isEmpty) {
                         AnimatedSnackBar.material(
                           'يرجى ملء جميع المعلومات الشخصية',
                           type: AnimatedSnackBarType.info,
@@ -339,7 +439,7 @@ class _UpdateDataState extends State<UpdateData> {
                         AuthCredential credential =
                             EmailAuthProvider.credential(
                                 email: user.email!,
-                                password: _passwordController.text);
+                                password: _currentPasswordController.text);
                         await user.reauthenticateWithCredential(credential);
                         await user
                             .verifyBeforeUpdateEmail(_emailController.text);
@@ -372,6 +472,7 @@ class _UpdateDataState extends State<UpdateData> {
                           ).show(context);
                         });
                       } catch (e) {
+                        print('Error updating password: $e');
                         AnimatedSnackBar.material(
                           'فشل تحديث كلمة المرور',
                           type: AnimatedSnackBarType.error,
