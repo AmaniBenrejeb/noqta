@@ -10,6 +10,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:simple_shadow/simple_shadow.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
+enum Language { Arabic, French }
+
 class Login_screen extends StatefulWidget {
   const Login_screen({Key? key}) : super(key: key);
 
@@ -22,6 +24,11 @@ class _Login_screenState extends State<Login_screen> {
   String? f_name;
   String? password;
   bool _obscurePassword = true;
+  bool _isLoading = false;
+  TextEditingController _controller = TextEditingController();
+  Language currentEmailLanguage = Language.Arabic;
+  Language currentPasswordLanguage = Language.Arabic;
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -35,7 +42,7 @@ class _Login_screenState extends State<Login_screen> {
       ),
       body: SingleChildScrollView(
         child: SizedBox(
-          height: screenHeight, // Constrain the height of the Stack
+          height: screenHeight,
           child: Stack(
             children: [
               loginBackground(),
@@ -66,33 +73,53 @@ class _Login_screenState extends State<Login_screen> {
                             color: Color(0xFFEFE5FF),
                           ),
                           child: Padding(
-                            padding: EdgeInsets.only(left: 7),
+                            padding: EdgeInsets.only(left: 10),
                             child: Center(
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 10),
-                                child: TextField(
-                                  textAlign: TextAlign.right,
-                                  cursorHeight: 25,
-                                  decoration: InputDecoration(
-                                  
-                                    hintText: "البريد الإلكتروني",
-                                    hintStyle: TextStyle(
+                                child: Directionality(
+                                  textDirection:
+                                      currentEmailLanguage == Language.Arabic
+                                          ? TextDirection.rtl
+                                          : TextDirection.ltr,
+                                  child: TextFormField(
+                                    controller: _controller,
+                                    cursorHeight: 25,
+                                    decoration: InputDecoration(
+                                      hintText: "البريد الإلكتروني",
+                                      hintStyle: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 163, 163, 163)
+                                                  .withOpacity(0.7)),
+                                      contentPadding: EdgeInsets.only(
+                                          left: 8, top: 8, bottom: 8),
+                                      suffixIcon: Icon(
+                                        Icons.mail_outline,
                                         color:
-                                            Color.fromARGB(255, 163, 163, 163)
-                                                .withOpacity(0.7)),
-                                                 contentPadding: EdgeInsets.only(left: 8, top: 8, bottom: 8),
-                                    suffixIcon: Icon(
-                                      Icons.mail_outline,
-                                      color:  Color.fromARGB(255, 149, 124, 173),
-                                     
+                                            Color.fromARGB(255, 149, 124, 173),
+                                      ),
+                                      border: InputBorder.none,
                                     ),
-                                    border: InputBorder.none,
+                                    autofocus: false,
+                                    keyboardType: TextInputType.emailAddress,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return null;
+                                      } else {
+                                        setState(() {
+                                          email = value;
+                                        });
+                                        return null;
+                                      }
+                                    },
+                                    onChanged: (value) {
+                                      email = value;
+                                      setState(() {
+                                        currentEmailLanguage =
+                                            detectLanguage(value);
+                                      });
+                                    },
                                   ),
-                                  autofocus: false,
-                                  keyboardType: TextInputType.emailAddress,
-                                  onChanged: (value) {
-                                    email = value;
-                                  },
                                 ),
                               ),
                             ),
@@ -107,54 +134,60 @@ class _Login_screenState extends State<Login_screen> {
                             color: Color(0xFFEFE5FF),
                           ),
                           child: Padding(
-                            padding: const EdgeInsets.only(left: 7),
+                            padding: const EdgeInsets.only(left: 10),
                             child: Center(
                               child: Padding(
                                 padding: const EdgeInsets.only(right: 10),
-                                child: TextFormField(
-                                  
-                                  cursorHeight: 25,
-                                  obscureText: _obscurePassword,
-                                  textAlign: TextAlign.right,
-                                  decoration: InputDecoration(
-                                    
-                                    hintText: "كلمة السّر",
-                                    hintStyle: TextStyle(
+                                child: Directionality(
+                                  textDirection:
+                                      currentPasswordLanguage == Language.Arabic
+                                          ? TextDirection.rtl
+                                          : TextDirection.ltr,
+                                  child: TextFormField(
+                                    cursorHeight: 25,
+                                    obscureText: _obscurePassword,
+                                    decoration: InputDecoration(
+                                      hintText: "كلمة السّر",
+                                      hintStyle: TextStyle(
+                                          color:
+                                              Color.fromARGB(255, 163, 163, 163)
+                                                  .withOpacity(0.7)),
+                                      contentPadding: EdgeInsets.only(
+                                          left: 10, top: 10, bottom: 10),
+                                      suffixIcon: IconButton(
+                                        icon: Icon(_obscurePassword
+                                            ? Icons.lock_outline
+                                            : Icons.lock_open_outlined),
                                         color:
-                                            Color.fromARGB(255, 163, 163, 163)
-                                                .withOpacity(0.7)),
-                                   contentPadding: EdgeInsets.only(left: 10, top: 10, bottom: 10),
-                                    suffixIcon: IconButton(
-                                      icon: Icon(_obscurePassword
-                                          ? Icons.lock_outline
-                                          : Icons.lock_open_outlined),
-                                      color:
-                                          Color.fromARGB(255, 149, 124, 173),
-                                      onPressed: () {
-                                        setState(() {
-                                          _obscurePassword =
-                                              !_obscurePassword; 
-                                        });
-                                      },
+                                            Color.fromARGB(255, 149, 124, 173),
+                                        onPressed: () {
+                                          setState(() {
+                                            _obscurePassword =
+                                                !_obscurePassword;
+                                          });
+                                        },
+                                      ),
+                                      border: InputBorder.none,
                                     ),
-                                                          
-                                    border: InputBorder.none,
-                                    
-                                  ),
-                                  autofocus: false,
-                                  onChanged: (value) {
-                                    password = value;
-                                  },
-                                  validator: (value) {
-                                    if (value == null || value.isEmpty) {
-                                      return 'Please enter password';
-                                    } else {
+                                    autofocus: false,
+                                    validator: (value) {
+                                      if (value == null || value.isEmpty) {
+                                        return null; // Return null without any message
+                                      } else {
+                                        setState(() {
+                                          email = value;
+                                        });
+                                        return null;
+                                      }
+                                    },
+                                    onChanged: (value) {
+                                      password = value;
                                       setState(() {
-                                        password = value;
+                                        currentPasswordLanguage =
+                                            detectLanguage(value);
                                       });
-                                      return null;
-                                    }
-                                  },
+                                    },
+                                  ),
                                 ),
                               ),
                             ),
@@ -172,88 +205,113 @@ class _Login_screenState extends State<Login_screen> {
                           child: Text("نسيت كلمة السر؟ "),
                         ),
                         SizedBox(height: screenHeight * 0.05),
-                        ElevatedButton(
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xFFA779F7),
-                          ),
-                          onPressed: () async {
-                            try {
-                              await FirebaseAuth.instance
-                                  .signInWithEmailAndPassword(
-                                email: email!.trim(),
-                                password: password!.trim(),
-                              );
+                        _isLoading
+                            ? CircularProgressIndicator()
+                            : ElevatedButton(
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Color(0xFFA779F7),
+                                ),
+                                onPressed: () async {
+                                  setState(() {
+                                    _isLoading = true;
+                                  });
+                                  if (email == null ||
+                                      email!.isEmpty ||
+                                      password == null ||
+                                      password!.isEmpty) {
+                                    AnimatedSnackBar.material(
+                                      'يرجى ملء جميع المعلومات الشخصية',
+                                      type: AnimatedSnackBarType.info,
+                                      duration: Duration(seconds: 6),
+                                      mobileSnackBarPosition:
+                                          MobileSnackBarPosition.bottom,
+                                    ).show(context);
+                                    return;
+                                  }
+                                  try {
+                                    await FirebaseAuth.instance
+                                        .signInWithEmailAndPassword(
+                                      email: email!.trim(),
+                                      password: password!.trim(),
+                                    );
 
-                              User? user = FirebaseAuth.instance.currentUser;
+                                    User? user =
+                                        FirebaseAuth.instance.currentUser;
 
-                              // Fetch user data from Firestore
-                              FirebaseFirestore.instance
-                                  .collection('Users')
-                                  .doc(user!.uid)
-                                  .get()
-                                  .then((DocumentSnapshot documentSnapshot) {
-                                if (documentSnapshot.exists) {
-                                  Map<String, dynamic> userData =
-                                      documentSnapshot.data()
-                                          as Map<String, dynamic>;
-                                  String displayName =
-                                      userData['full name'] ?? '';
+                                    // Fetch user data from Firestore
+                                    FirebaseFirestore.instance
+                                        .collection('Users')
+                                        .doc(user!.uid)
+                                        .get()
+                                        .then((DocumentSnapshot
+                                            documentSnapshot) async {
+                                      if (documentSnapshot.exists) {
+                                        Map<String, dynamic> userData =
+                                            documentSnapshot.data()
+                                                as Map<String, dynamic>;
+                                        String displayName =
+                                            userData['full name'] ?? '';
 
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                      builder: (context) => HomePage(),
-                                    ),
-                                  );
+                                        Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                            builder: (context) => HomePage(),
+                                          ),
+                                        );
 
-                                  AnimatedSnackBar.material(
-                                    ' متصل $displayName المستخدم',
-                                    type: AnimatedSnackBarType.success,
-                                    duration: Duration(seconds: 6),
-                                    mobileSnackBarPosition:
-                                        MobileSnackBarPosition.bottom,
-                                  ).show(context);
-                                }
-                              }).catchError((error) {
-                                print("Failed to fetch user data: $error");
-                              });
-                            } on FirebaseAuthException catch (ex) {
-                              print('FirebaseAuthException code: ${ex.code}');
-                              if (ex.code == 'invalid-credential') {
-                                AnimatedSnackBar.material(
-                                  'البريد الإلكتروني أو كلمة المرور غير صحيحة',
-                                  type: AnimatedSnackBarType.error,
-                                  duration: Duration(seconds: 6),
-                                  mobileSnackBarPosition:
-                                      MobileSnackBarPosition.bottom,
-                                ).show(context);
-                              } else if (ex.code == 'invalid-email') {
-                                AnimatedSnackBar.material(
-                                  'البريد الإلكتروني غير صالح',
-                                  type: AnimatedSnackBarType.error,
-                                  duration: Duration(seconds: 4),
-                                  mobileSnackBarPosition:
-                                      MobileSnackBarPosition.bottom,
-                                ).show(context);
-                              } else {
-                                // Handle other FirebaseAuthException errors
-                                AnimatedSnackBar.material(
-                                  'حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى لاحقًا.',
-                                  type: AnimatedSnackBarType.error,
-                                  duration: Duration(seconds: 4),
-                                  mobileSnackBarPosition:
-                                      MobileSnackBarPosition.bottom,
-                                ).show(context);
-                              }
-                            }
-                          },
-                          child: Text(
-                            "تسجيل الدخول ",
-                            style: TextStyle(
-                              color: Colors.white,
-                            ),
-                          ),
-                        ),
+                                        AnimatedSnackBar.material(
+                                          ' متصل $displayName المستخدم',
+                                          type: AnimatedSnackBarType.success,
+                                          duration: Duration(seconds: 6),
+                                          mobileSnackBarPosition:
+                                              MobileSnackBarPosition.bottom,
+                                        ).show(context);
+                                      }
+                                    }).catchError((error) {
+                                      print(
+                                          "Failed to fetch user data: $error");
+                                    });
+                                  } on FirebaseAuthException catch (ex) {
+                                    print(
+                                        'FirebaseAuthException code: ${ex.code}');
+                                    if (ex.code == 'invalid-credential') {
+                                      AnimatedSnackBar.material(
+                                        'البريد الإلكتروني أو كلمة المرور غير صحيحة',
+                                        type: AnimatedSnackBarType.error,
+                                        duration: Duration(seconds: 6),
+                                        mobileSnackBarPosition:
+                                            MobileSnackBarPosition.bottom,
+                                      ).show(context);
+                                    } else if (ex.code == 'invalid-email') {
+                                      AnimatedSnackBar.material(
+                                        'البريد الإلكتروني غير صالح',
+                                        type: AnimatedSnackBarType.error,
+                                        duration: Duration(seconds: 4),
+                                        mobileSnackBarPosition:
+                                            MobileSnackBarPosition.bottom,
+                                      ).show(context);
+                                    } else {
+                                      // Handle other FirebaseAuthException errors
+                                      AnimatedSnackBar.material(
+                                        'حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى لاحقًا.',
+                                        type: AnimatedSnackBarType.error,
+                                        duration: Duration(seconds: 4),
+                                        mobileSnackBarPosition:
+                                            MobileSnackBarPosition.bottom,
+                                      ).show(context);
+                                    }
+                                  }
+                                  setState(() {
+                                    _isLoading = false;
+                                  });
+                                },
+                                child: Text(
+                                  "تسجيل الدخول ",
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
                         SizedBox(height: screenHeight * 0.05),
                         Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -306,5 +364,14 @@ class _Login_screenState extends State<Login_screen> {
         ),
       ),
     );
+  }
+
+  Language detectLanguage(String text) {
+    // Example language detection logic
+    if (text.contains(RegExp(r'[a-zA-Z]'))) {
+      return Language.French;
+    } else {
+      return Language.Arabic;
+    }
   }
 }

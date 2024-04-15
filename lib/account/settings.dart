@@ -6,6 +6,8 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+enum Language { Arabic, French }
+
 class UpdateData extends StatefulWidget {
   const UpdateData({Key? key}) : super(key: key);
 
@@ -24,6 +26,11 @@ class _UpdateDataState extends State<UpdateData> {
   String? password;
   bool _obscurePassword = true;
   bool _obscurePassword1 = true;
+  bool _isLoading = false;
+  Language currentNameLanguage = Language.Arabic;
+  Language currentEmailLanguage = Language.Arabic;
+  Language currentPasswordLanguage = Language.Arabic;
+  Language currentNewPasswordLanguage = Language.Arabic;
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -101,55 +108,63 @@ class _UpdateDataState extends State<UpdateData> {
                         width: 370,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 10),
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            controller: _usernameController,
-                            style: GoogleFonts.radioCanada(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
-                            decoration: InputDecoration(
-                              hintText: " إسم المستخدم الجديدة",
-                              hintStyle: GoogleFonts.radioCanada(
-                                  color: Color(0xFFF2E5FF),
+                          child: Directionality(
+                            textDirection:
+                                currentNameLanguage == Language.Arabic
+                                    ? TextDirection.rtl
+                                    : TextDirection.ltr,
+                            child: TextFormField(
+                              controller: _usernameController,
+                              style: GoogleFonts.radioCanada(
+                                  color: Colors.black,
                                   fontSize: 17,
                                   fontWeight: FontWeight.w500),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 11, horizontal: 20),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                borderSide: BorderSide(
-                                  color: Color(
-                                      0xFFF2E5FF), // Color of the border when not focused
+                              decoration: InputDecoration(
+                                hintText: " إسم المستخدم الجديدة",
+                                hintStyle: GoogleFonts.radioCanada(
+                                    color: Color(0xFFF2E5FF),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 11, horizontal: 20),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide(
+                                    color: Color(
+                                        0xFFF2E5FF), // Color of the border when not focused
+                                  ),
                                 ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                borderSide: BorderSide(
-                                  color: Color(
-                                      0xFFF2E5FF), // Color of the border when focused
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide(
+                                    color: Color(
+                                        0xFFF2E5FF), // Color of the border when focused
+                                  ),
                                 ),
+                                suffixIcon: Icon(Icons.person_outline_outlined,
+                                    color: Color.fromARGB(255, 149, 124, 173)),
                               ),
-                              suffixIcon: Icon(Icons.person_outline_outlined,
-                                  color: Color.fromARGB(255, 149, 124, 173)),
-                            ),
-                            autofocus: false,
-                            keyboardType: TextInputType.text,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your full name';
-                              } else {
+                              autofocus: false,
+                              keyboardType: TextInputType.text,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your full name';
+                                } else {
+                                  setState(() {
+                                    f_name = value;
+                                  });
+                                  return null;
+                                }
+                              },
+                              onChanged: (value) {
                                 setState(() {
                                   f_name = value;
+                                  setState(() {
+                                    currentNameLanguage = detectLanguage(value);
+                                  });
                                 });
-                                return null;
-                              }
-                            },
-                            onChanged: (value) {
-                              setState(() {
-                                f_name = value;
-                              });
-                            },
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -183,55 +198,63 @@ class _UpdateDataState extends State<UpdateData> {
                         width: 370,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 14),
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            controller: _emailController,
-                            style: GoogleFonts.radioCanada(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
-                            decoration: InputDecoration(
-                              hintText: "  البريد الإلكتروني الجديد",
-                              hintStyle: GoogleFonts.radioCanada(
-                                  color: Color(0xFFF2E5FF),
+                          child: Directionality(
+                            textDirection:
+                                currentEmailLanguage == Language.Arabic
+                                    ? TextDirection.rtl
+                                    : TextDirection.ltr,
+                            child: TextFormField(
+                              controller: _emailController,
+                              style: GoogleFonts.radioCanada(
+                                  color: Colors.black,
                                   fontSize: 17,
                                   fontWeight: FontWeight.w500),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 11, horizontal: 20),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                borderSide: BorderSide(
-                                  color: Color(
-                                      0xFFF2E5FF), // Color of the border when not focused
+                              decoration: InputDecoration(
+                                hintText: "  البريد الإلكتروني الجديد",
+                                hintStyle: GoogleFonts.radioCanada(
+                                    color: Color(0xFFF2E5FF),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 11, horizontal: 20),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide(
+                                    color: Color(
+                                        0xFFF2E5FF), // Color of the border when not focused
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide(
+                                    color: Color(
+                                        0xFFF2E5FF), // Color of the border when focused
+                                  ),
+                                ),
+                                suffixIcon: Icon(
+                                  Icons.email_outlined,
+                                  color: Color.fromARGB(255, 149, 124, 173),
                                 ),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                borderSide: BorderSide(
-                                  color: Color(
-                                      0xFFF2E5FF), // Color of the border when focused
-                                ),
-                              ),
-                              suffixIcon: Icon(
-                                Icons.email_outlined,
-                                color: Color.fromARGB(255, 149, 124, 173),
-                              ),
-                            ),
-                            autofocus: false,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              } else {
+                              autofocus: false,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                } else {
+                                  setState(() {
+                                    email = value;
+                                  });
+                                  return null;
+                                }
+                              },
+                              onChanged: (value) {
+                                email = value;
                                 setState(() {
-                                  email = value;
+                                  currentEmailLanguage = detectLanguage(value);
                                 });
-                                return null;
-                              }
-                            },
-                            onChanged: (value) {
-                              email = value;
-                            },
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -265,56 +288,65 @@ class _UpdateDataState extends State<UpdateData> {
                         width: 370,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 14),
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            controller: _currentPasswordController,
-                            obscureText: _obscurePassword1, // Password field
-                            style: GoogleFonts.radioCanada(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
-                            decoration: InputDecoration(
-                              hintText: "كلمة السر الحالية",
-                              hintStyle: GoogleFonts.radioCanada(
-                                  color: Color(0xFFF2E5FF),
+                          child: Directionality(
+                            textDirection:
+                                currentPasswordLanguage == Language.Arabic
+                                    ? TextDirection.rtl
+                                    : TextDirection.ltr,
+                            child: TextFormField(
+                              controller: _currentPasswordController,
+                              obscureText: _obscurePassword1, // Password field
+                              style: GoogleFonts.radioCanada(
+                                  color: Colors.black,
                                   fontSize: 17,
                                   fontWeight: FontWeight.w500),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 11, horizontal: 20),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                borderSide: BorderSide(
-                                  color: Color(0xFFF2E5FF),
+                              decoration: InputDecoration(
+                                hintText: "كلمة السر الحالية",
+                                hintStyle: GoogleFonts.radioCanada(
+                                    color: Color(0xFFF2E5FF),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 11, horizontal: 20),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide(
+                                    color: Color(0xFFF2E5FF),
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide(
+                                    color: Color(0xFFF2E5FF),
+                                  ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(_obscurePassword1
+                                      ? Icons.lock_outline
+                                      : Icons.lock_open_outlined),
+                                  color: Color.fromARGB(255, 149, 124, 173),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword1 =
+                                          !_obscurePassword1; // Toggle visibility
+                                    });
+                                  },
                                 ),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                borderSide: BorderSide(
-                                  color: Color(0xFFF2E5FF),
-                                ),
-                              ),
-                              suffixIcon: Icon(Icons.lock_outline,
-                                  color: Color.fromARGB(255, 149, 124, 173)),
-                              prefixIcon: IconButton(
-                                icon: Icon(_obscurePassword1
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
-                                color: Color.fromARGB(255, 149, 124, 173),
-                                onPressed: () {
-                                  setState(() {
-                                    _obscurePassword1 =
-                                        !_obscurePassword1; // Toggle visibility
-                                  });
-                                },
-                              ),
+                              autofocus: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter current password';
+                                }
+                                return null;
+                              },
+                              onChanged: (value) {
+                                setState(() {
+                                  currentPasswordLanguage =
+                                      detectLanguage(value);
+                                });
+                              },
                             ),
-                            autofocus: false,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter current password';
-                              }
-                              return null;
-                            },
                           ),
                         ),
                       ),
@@ -348,65 +380,72 @@ class _UpdateDataState extends State<UpdateData> {
                         width: 370,
                         child: Padding(
                           padding: const EdgeInsets.only(right: 14),
-                          child: TextFormField(
-                            textAlign: TextAlign.right,
-                            controller: _passwordController,
-                            obscureText: _obscurePassword,
-                            style: GoogleFonts.radioCanada(
-                                color: Colors.black,
-                                fontSize: 17,
-                                fontWeight: FontWeight.w500),
-                            decoration: InputDecoration(
-                              hintText: " كلمة السر الجديدة  ",
-                              hintStyle: GoogleFonts.radioCanada(
-                                  color: Color(0xFFF2E5FF),
+                          child: Directionality(
+                            textDirection:
+                                currentNewPasswordLanguage == Language.Arabic
+                                    ? TextDirection.rtl
+                                    : TextDirection.ltr,
+                            child: TextFormField(
+                              controller: _passwordController,
+                              obscureText: _obscurePassword,
+                              style: GoogleFonts.radioCanada(
+                                  color: Colors.black,
                                   fontSize: 17,
                                   fontWeight: FontWeight.w500),
-                              contentPadding: EdgeInsets.symmetric(
-                                  vertical: 11, horizontal: 20),
-                              enabledBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                borderSide: BorderSide(
-                                  color: Color(
-                                      0xFFF2E5FF), // Color of the border when not focused
+                              decoration: InputDecoration(
+                                hintText: " كلمة السر الجديدة  ",
+                                hintStyle: GoogleFonts.radioCanada(
+                                    color: Color(0xFFF2E5FF),
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.w500),
+                                contentPadding: EdgeInsets.symmetric(
+                                    vertical: 11, horizontal: 20),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide(
+                                    color: Color(
+                                        0xFFF2E5FF), // Color of the border when not focused
+                                  ),
+                                ),
+                                focusedBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(20.0),
+                                  borderSide: BorderSide(
+                                    color: Color(
+                                        0xFFF2E5FF), // Color of the border when focused
+                                  ),
+                                ),
+                                suffixIcon: IconButton(
+                                  icon: Icon(_obscurePassword
+                                      ? Icons.lock_outline
+                                      : Icons.lock_open_outlined),
+                                  color: Color.fromARGB(255, 149, 124, 173),
+                                  onPressed: () {
+                                    setState(() {
+                                      _obscurePassword =
+                                          !_obscurePassword; // Toggle visibility
+                                    });
+                                  },
                                 ),
                               ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(20.0),
-                                borderSide: BorderSide(
-                                  color: Color(
-                                      0xFFF2E5FF), // Color of the border when focused
-                                ),
-                              ),
-                              suffixIcon: Icon(Icons.lock_outline,
-                                  color: Color.fromARGB(255, 149, 124, 173)),
-                              prefixIcon: IconButton(
-                                icon: Icon(_obscurePassword
-                                    ? Icons.visibility_off
-                                    : Icons.visibility),
-                                color: Color.fromARGB(255, 149, 124, 173),
-                                onPressed: () {
+                              autofocus: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter password';
+                                } else {
                                   setState(() {
-                                    _obscurePassword =
-                                        !_obscurePassword; // Toggle visibility
+                                    password = value;
                                   });
-                                },
-                              ),
-                            ),
-                            autofocus: false,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter password';
-                              } else {
+                                  return null;
+                                }
+                              },
+                              onChanged: (value) {
+                                password = value;
                                 setState(() {
-                                  password = value;
+                                  currentNewPasswordLanguage =
+                                      detectLanguage(value);
                                 });
-                                return null;
-                              }
-                            },
-                            onChanged: (value) {
-                              password = value;
-                            },
+                              },
+                            ),
                           ),
                         ),
                       ),
@@ -414,89 +453,114 @@ class _UpdateDataState extends State<UpdateData> {
                   ),
                 ),
                 SizedBox(height: screenHeight * 0.18),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    minimumSize: Size(320, 50),
-                    backgroundColor: Color(0xFFA779F7),
-                  ),
-                  onPressed: () async {
-                    User? user = FirebaseAuth.instance.currentUser;
+                //condition ? expression1 : expression2
+                _isLoading
+                    ? CircularProgressIndicator()
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          minimumSize: Size(320, 50),
+                          backgroundColor: Color(0xFFA779F7),
+                        ),
+                        onPressed: () async {
+                          setState(() {
+                            _isLoading = true;
+                          });
+                          User? user = FirebaseAuth.instance.currentUser;
 
-                    if (user != null) {
-                      if (_usernameController.text.isEmpty ||
-                          _emailController.text.isEmpty ||
-                          _passwordController.text.isEmpty ||
-                          _currentPasswordController.text.isEmpty) {
-                        AnimatedSnackBar.material(
-                          'يرجى ملء جميع المعلومات الشخصية',
-                          type: AnimatedSnackBarType.info,
-                          duration: Duration(seconds: 6),
-                          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
-                        ).show(context);
-                      }
+                          if (user != null) {
+                            if (_usernameController.text.isEmpty ||
+                                _emailController.text.isEmpty ||
+                                _passwordController.text.isEmpty ||
+                                _currentPasswordController.text.isEmpty) {
+                              AnimatedSnackBar.material(
+                                'يرجى ملء جميع المعلومات الشخصية',
+                                type: AnimatedSnackBarType.info,
+                                duration: Duration(seconds: 6),
+                                mobileSnackBarPosition:
+                                    MobileSnackBarPosition.bottom,
+                              ).show(context);
+                              return;
+                            }
 
-                      try {
-                        AuthCredential credential =
-                            EmailAuthProvider.credential(
-                                email: user.email!,
-                                password: _currentPasswordController.text);
-                        await user.reauthenticateWithCredential(credential);
-                        await user
-                            .verifyBeforeUpdateEmail(_emailController.text);
-                        await user.updatePassword(_passwordController.text);
-                        await user.updateDisplayName(_usernameController.text);
+                            try {
+                              AuthCredential credential =
+                                  EmailAuthProvider.credential(
+                                      email: user.email!,
+                                      password:
+                                          _currentPasswordController.text);
+                              await user
+                                  .reauthenticateWithCredential(credential);
+                              await user.verifyBeforeUpdateEmail(
+                                  _emailController.text);
+                              await user
+                                  .updatePassword(_passwordController.text);
+                              await user
+                                  .updateDisplayName(_usernameController.text);
 
-                        Map<String, dynamic> updatedData = {
-                          "full name": _usernameController.text,
-                          "email": _emailController.text,
-                        };
-                        FirebaseFirestore.instance
-                            .collection('Users')
-                            .doc(user.uid)
-                            .update(updatedData)
-                            .then((_) {
-                          AnimatedSnackBar.material(
-                            'تم تحديث البيانات بنجاح',
-                            type: AnimatedSnackBarType.success,
-                            duration: Duration(seconds: 6),
-                            mobileSnackBarPosition:
-                                MobileSnackBarPosition.bottom,
-                          ).show(context);
-                        }).catchError((error) {
-                          AnimatedSnackBar.material(
-                            'فشل تحديث البيانات',
-                            type: AnimatedSnackBarType.error,
-                            duration: Duration(seconds: 6),
-                            mobileSnackBarPosition:
-                                MobileSnackBarPosition.bottom,
-                          ).show(context);
-                        });
-                      } catch (e) {
-                        print('Error updating password: $e');
-                        AnimatedSnackBar.material(
-                          'فشل تحديث كلمة المرور',
-                          type: AnimatedSnackBarType.error,
-                          duration: Duration(seconds: 6),
-                          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
-                        ).show(context);
-                      }
-                    }
-                  },
-                  child: Text(
-                    "حفظ  ",
-                    textAlign: TextAlign.center,
-                    style: GoogleFonts.radioCanada(
-                      fontSize: 30,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white,
-                    ),
-                  ),
-                ),
+                              Map<String, dynamic> updatedData = {
+                                "full name": _usernameController.text,
+                                "email": _emailController.text,
+                              };
+                              FirebaseFirestore.instance
+                                  .collection('Users')
+                                  .doc(user.uid)
+                                  .update(updatedData)
+                                  .then((_) {
+                                AnimatedSnackBar.material(
+                                  'تم تحديث البيانات بنجاح',
+                                  type: AnimatedSnackBarType.success,
+                                  duration: Duration(seconds: 6),
+                                  mobileSnackBarPosition:
+                                      MobileSnackBarPosition.bottom,
+                                ).show(context);
+                              }).catchError((error) {
+                                AnimatedSnackBar.material(
+                                  'فشل تحديث البيانات',
+                                  type: AnimatedSnackBarType.error,
+                                  duration: Duration(seconds: 6),
+                                  mobileSnackBarPosition:
+                                      MobileSnackBarPosition.bottom,
+                                ).show(context);
+                              });
+                            } catch (e) {
+                              print('Error updating password: $e');
+                              AnimatedSnackBar.material(
+                                'فشل تحديث كلمة المرور',
+                                type: AnimatedSnackBarType.error,
+                                duration: Duration(seconds: 6),
+                                mobileSnackBarPosition:
+                                    MobileSnackBarPosition.bottom,
+                              ).show(context);
+                            }
+                          }
+                          setState(() {
+                            _isLoading = false;
+                          });
+                        },
+                        child: Text(
+                          "حفظ  ",
+                          textAlign: TextAlign.center,
+                          style: GoogleFonts.radioCanada(
+                            fontSize: 30,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
               ]),
             ],
           ),
         ),
       ),
     );
+  }
+
+  Language detectLanguage(String text) {
+    // Example language detection logic
+    if (text.contains(RegExp(r'[a-zA-Z]'))) {
+      return Language.French;
+    } else {
+      return Language.Arabic;
+    }
   }
 }

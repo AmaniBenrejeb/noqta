@@ -7,6 +7,10 @@ import 'package:simple_shadow/simple_shadow.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:animated_snack_bar/animated_snack_bar.dart';
+
+
+enum Language { Arabic, French }
 
 class createAccount extends StatefulWidget {
   const createAccount({Key? key});
@@ -25,8 +29,10 @@ class _createAccountState extends State<createAccount> {
   var _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _obscurePassword = true;
-  // bool _obscureText = true;
-  // bool _isLoading = false;
+  bool _isLoading = false;
+  Language currentNameLanguage = Language.Arabic;
+  Language currentEmailLanguage = Language.Arabic;
+  Language currentPasswordLanguage = Language.Arabic;
 
   @override
   Widget build(BuildContext context) {
@@ -74,271 +80,353 @@ class _createAccountState extends State<createAccount> {
                               color: Color(0xFFEFE5FF),
                             ),
                             child: Padding(
-                              padding: EdgeInsets.only(left: 7),
+                              padding: EdgeInsets.only(left: 10),
                               child: Center(
                                 child: Padding(
                                   padding: const EdgeInsets.only(right: 10),
-                                  child: TextFormField(
-                                    textAlign: TextAlign.right,
-                                    cursorHeight: 25,
-                                    controller: _fNameController,
-                                    decoration: InputDecoration(
-                                      prefixIconConstraints: BoxConstraints(
-                                          minHeight: 30, minWidth: 30),
-                                      hintText: " إسم المستخدم",
-                                      hintStyle: TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 163, 163, 163)
-                                                  .withOpacity(0.7)),
-                                      suffixIcon: Icon(
-                                        Icons.person_outline_outlined,
-                                        color:
-                                            Color.fromARGB(255, 149, 124, 173),
+                                  child: Directionality(
+                                    textDirection:
+                                        currentNameLanguage == Language.Arabic
+                                            ? TextDirection.rtl
+                                            : TextDirection.ltr,
+                                    child: TextFormField(
+                                      cursorHeight: 25,
+                                      controller: _fNameController,
+                                      decoration: InputDecoration(
+                                        prefixIconConstraints: BoxConstraints(
+                                            minHeight: 30, minWidth: 30),
+                                        hintText: " إسم المستخدم",
+                                        hintStyle: TextStyle(
+                                            color: Color.fromARGB(
+                                                    255, 163, 163, 163)
+                                                .withOpacity(0.7)),
+                                        contentPadding: EdgeInsets.only(
+                                            left: 10, top: 10, bottom: 10),
+                                        suffixIcon: Icon(
+                                          Icons.person_outline_outlined,
+                                          color: Color.fromARGB(
+                                              255, 149, 124, 173),
+                                        ),
+                                        border: InputBorder.none,
                                       ),
-                                      border: InputBorder.none,
-                                    ),
-                                    autofocus: false,
-                                    keyboardType: TextInputType.text,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your full name';
-                                      } else {
-                                        setState(() {
-                                          f_name = value;
-                                        });
-                                        return null;
-                                      }
-                                    },
-                                    onChanged: (value) {
-                                      f_name = value;
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: screenHeight * 0.015),
-                          Container(
-                            width: 218,
-                            height: 45,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Color(0xFFEFE5FF),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 7),
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: TextFormField(
-                                    controller: _emailController,
-                                    textAlign: TextAlign.right,
-                                    cursorHeight: 25,
-                                    decoration: InputDecoration(
-                                      prefixIconConstraints: BoxConstraints(
-                                          minHeight: 30, minWidth: 30),
-                                      hintText: "البريد الإلكتروني",
-                                      hintStyle: TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 163, 163, 163)
-                                                  .withOpacity(0.7)),
-                                      suffixIcon: Icon(
-                                        Icons.mail_outline,
-                                        color:
-                                            Color.fromARGB(255, 149, 124, 173),
-                                      ),
-                                      border: InputBorder.none,
-                                    ),
-                                    autofocus: false,
-                                    keyboardType: TextInputType.emailAddress,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter your email';
-                                      } else {
-                                        setState(() {
-                                          email = value;
-                                        });
-                                        return null;
-                                      }
-                                    },
-                                    onChanged: (value) {
-                                      email = value;
-                                    },
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                          SizedBox(height: screenHeight * 0.015),
-                          Container(
-                            width: 218,
-                            height: 45,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Color(0xFFEFE5FF),
-                            ),
-                            child: Padding(
-                              padding: EdgeInsets.only(left: 7),
-                              child: Center(
-                                child: Padding(
-                                  padding: const EdgeInsets.only(right: 10),
-                                  child: TextFormField(
-                                    controller: _passwordController,
-                                    cursorHeight: 25,
-                                    textAlign: TextAlign.right,
-                                    decoration: InputDecoration(
-                                      hintText: "كلمة السّر",
-                                      hintStyle: TextStyle(
-                                          color:
-                                              Color.fromARGB(255, 163, 163, 163)
-                                                  .withOpacity(0.7)),
-                                      contentPadding: EdgeInsets.only(
-                                          left: 10, top: 10, bottom: 10),
-                                      suffixIcon: IconButton(
-                                        icon: Icon(_obscurePassword
-                                            ? Icons.lock_outline
-                                            : Icons.lock_open_outlined),
-                                        color:
-                                            Color.fromARGB(255, 149, 124, 173),
-                                        onPressed: () {
+                                      autofocus: false,
+                                      keyboardType: TextInputType.text,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return null;
+                                        } else {
                                           setState(() {
-                                            _obscurePassword =
-                                                !_obscurePassword;
+                                            f_name = value;
                                           });
-                                        },
-                                      ),
-                                      border: InputBorder.none,
-                                    ),
-                                    autofocus: false,
-                                    validator: (value) {
-                                      if (value == null || value.isEmpty) {
-                                        return 'Please enter password';
-                                      } else {
+                                          return null;
+                                        }
+                                      },
+                                      onChanged: (value) {
+                                        f_name = value;
                                         setState(() {
-                                          password = value;
+                                          currentNameLanguage =
+                                              detectLanguage(value);
                                         });
-                                        return null;
-                                      }
-                                    },
-                                    onChanged: (value) {
-                                      password = value;
-                                    },
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: screenHeight * 0.015),
+                          Container(
+                            width: 218,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Color(0xFFEFE5FF),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 10),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Directionality(
+                                    textDirection:
+                                        currentEmailLanguage == Language.Arabic
+                                            ? TextDirection.rtl
+                                            : TextDirection.ltr,
+                                    child: TextFormField(
+                                      controller: _emailController,
+                                      cursorHeight: 25,
+                                      decoration: InputDecoration(
+                                        prefixIconConstraints: BoxConstraints(
+                                            minHeight: 30, minWidth: 30),
+                                        hintText: "البريد الإلكتروني",
+                                        hintStyle: TextStyle(
+                                            color: Color.fromARGB(
+                                                    255, 163, 163, 163)
+                                                .withOpacity(0.7)),
+                                        contentPadding: EdgeInsets.only(
+                                            left: 10, top: 10, bottom: 10),
+                                        suffixIcon: Icon(
+                                          Icons.mail_outline,
+                                          color: Color.fromARGB(
+                                              255, 149, 124, 173),
+                                        ),
+                                        border: InputBorder.none,
+                                      ),
+                                      autofocus: false,
+                                      keyboardType: TextInputType.emailAddress,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return null;
+                                        } else {
+                                          setState(() {
+                                            email = value;
+                                          });
+                                          return null;
+                                        }
+                                      },
+                                      onChanged: (value) {
+                                        email = value;
+                                        setState(() {
+                                          currentEmailLanguage =
+                                              detectLanguage(value);
+                                        });
+                                      },
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          SizedBox(height: screenHeight * 0.015),
+                          Container(
+                            width: 218,
+                            height: 45,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(20),
+                              color: Color(0xFFEFE5FF),
+                            ),
+                            child: Padding(
+                              padding: EdgeInsets.only(left: 10),
+                              child: Center(
+                                child: Padding(
+                                  padding: const EdgeInsets.only(right: 10),
+                                  child: Directionality(
+                                    textDirection: currentPasswordLanguage ==
+                                            Language.Arabic
+                                        ? TextDirection.rtl
+                                        : TextDirection.ltr,
+                                    child: TextFormField(
+                                      controller: _passwordController,
+                                      cursorHeight: 25,
+                                      decoration: InputDecoration(
+                                        hintText: "كلمة السّر",
+                                        hintStyle: TextStyle(
+                                            color: Color.fromARGB(
+                                                    255, 163, 163, 163)
+                                                .withOpacity(0.7)),
+                                        contentPadding: EdgeInsets.only(
+                                            left: 10, top: 10, bottom: 10),
+                                        suffixIcon: IconButton(
+                                          icon: Icon(_obscurePassword
+                                              ? Icons.lock_outline
+                                              : Icons.lock_open_outlined),
+                                          color: Color.fromARGB(
+                                              255, 149, 124, 173),
+                                          onPressed: () {
+                                            setState(() {
+                                              _obscurePassword =
+                                                  !_obscurePassword;
+                                            });
+                                          },
+                                        ),
+                                        border: InputBorder.none,
+                                      ),
+                                      autofocus: false,
+                                      validator: (value) {
+                                        if (value == null || value.isEmpty) {
+                                          return null;
+                                        } else {
+                                          setState(() {
+                                            password = value;
+                                          });
+                                          return null;
+                                        }
+                                      },
+                                      onChanged: (value) {
+                                        password = value;
+                                        setState(() {
+                                          currentPasswordLanguage =
+                                              detectLanguage(value);
+                                        });
+                                      },
+                                    ),
                                   ),
                                 ),
                               ),
                             ),
                           ),
                           SizedBox(height: screenHeight * 0.035),
-                          ElevatedButton(
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: Color(0xFFA779F7),
-                            ),
-                            onPressed: () async {
-                              if (_formKey.currentState!.validate()) {
-                                try {
-                                  QuerySnapshot querySnapshot =
-                                      await FirebaseFirestore.instance
-                                          .collection('Users')
-                                          .where('email',
-                                              isEqualTo: email!.trim())
-                                          .get();
-
-                                  if (querySnapshot.docs.isNotEmpty) {
-                                    // Email address already exists, show error message
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: Color(0xFFA779F7),
-                                        content: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                                'هذا البريد الإلكتروني مستخدم بالفعل'),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  } else {
-                                    await FirebaseAuth.instance
-                                        .createUserWithEmailAndPassword(
-                                            email: email!.trim(),
-                                            password: password!.trim());
-
-                                    final User? user =
-                                        FirebaseAuth.instance.currentUser;
-                                    final _uid = user!.uid;
-                                    await FirebaseFirestore.instance
-                                        .collection('Users')
-                                        .doc(_uid)
-                                        .set({
-                                      "full name": "$f_name",
-                                      "email": "$email",
-                                      "id": _uid,
-                                      "isAdmin": "false",
+                          _isLoading
+                              ? CircularProgressIndicator()
+                              : ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Color(0xFFA779F7),
+                                  ),
+                                  onPressed: () async {
+                                    setState(() {
+                                      _isLoading = true;
                                     });
-                                    await FirebaseFirestore.instance
-                                        .collection('Users')
-                                        .doc(_uid)
-                                        .collection('historique')
-                                        .add({});
+                                    if (email == null ||
+                                        email!.isEmpty ||
+                                        password == null ||
+                                        password!.isEmpty ||
+                                        f_name == null ||
+                                        f_name!.isEmpty) {
+                                      AnimatedSnackBar.material(
+                                        'يرجى ملء جميع المعلومات الشخصية',
+                                        type: AnimatedSnackBarType.info,
+                                        duration: Duration(seconds: 6),
+                                        mobileSnackBarPosition:
+                                            MobileSnackBarPosition.bottom,
+                                      ).show(context);
+                                      return; // Stop further execution if fields are not filled
+                                    }
+                                    if (_formKey.currentState!.validate()) {
+                                      try {
+                                        QuerySnapshot querySnapshot =
+                                            await FirebaseFirestore.instance
+                                                .collection('Users')
+                                                .where('email',
+                                                    isEqualTo: email!.trim())
+                                                .get();
 
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (context) => HomePage(),
-                                      ),
-                                    );
-
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: Color(0xFFA779F7),
-                                        content: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text(
-                                              '"بنجاح $f_name تم إنشاءحساب باسم "',
+                                        if (querySnapshot.docs.isNotEmpty) {
+                                          AnimatedSnackBar.material(
+                                            ' هذا البريد الإلكتروني مستخدم بالفعل',
+                                            type: AnimatedSnackBarType.info,
+                                            duration: Duration(seconds: 6),
+                                            mobileSnackBarPosition:
+                                                MobileSnackBarPosition.bottom,
+                                          ).show(context);
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            SnackBar(
+                                              backgroundColor:
+                                                  Color(0xFFA779F7),
+                                              content: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment.center,
+                                                children: [
+                                                  Text(
+                                                      'هذا البريد الإلكتروني مستخدم بالفعل'),
+                                                ],
+                                              ),
                                             ),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  }
-                                } on FirebaseAuthException catch (e) {
-                                  if (e.code == 'weak-password') {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: Color(0xFFA779F7),
-                                        content: Row(
-                                          mainAxisAlignment:
-                                              MainAxisAlignment.center,
-                                          children: [
-                                            Text('كلمة السر غير صالحة '),
-                                          ],
-                                        ),
-                                      ),
-                                    );
-                                  } else if (e.code == 'invalid-email') {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        backgroundColor: Color(0xFFA779F7),
-                                        content: Center(
-                                            child: Text(
-                                          'البريد الإلكتروني غير صالح',
-                                        )),
-                                      ),
-                                    );
-                                  }
-                                }
-                              }
-                            },
-                            child: Text(
-                              "إنشاء حساب ",
-                              style: TextStyle(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
+                                          );
+                                        } else {
+                                          await FirebaseAuth.instance
+                                              .createUserWithEmailAndPassword(
+                                                  email: email!.trim(),
+                                                  password: password!.trim());
+
+                                          final User? user =
+                                              FirebaseAuth.instance.currentUser;
+                                          final _uid = user!.uid;
+                                          await FirebaseFirestore.instance
+                                              .collection('Users')
+                                              .doc(_uid)
+                                              .set({
+                                            "full name": "$f_name",
+                                            "email": "$email",
+                                            "id": _uid,
+                                            "isAdmin": "false",
+                                          });
+                                          await FirebaseFirestore.instance
+                                              .collection('Users')
+                                              .doc(_uid)
+                                              .collection('historique')
+                                              .add({});
+
+                                          Navigator.push(
+                                            context,
+                                            MaterialPageRoute(
+                                              builder: (context) => HomePage(),
+                                            ),
+                                          );
+                                          AnimatedSnackBar.material(
+                                            ' بنجاح $f_name تم إنشاءحساب باسم ',
+                                            type: AnimatedSnackBarType.success,
+                                            duration: Duration(seconds: 6),
+                                            mobileSnackBarPosition:
+                                                MobileSnackBarPosition.bottom,
+                                          ).show(context);
+                                          // ScaffoldMessenger.of(context).showSnackBar(
+                                          //   SnackBar(
+                                          //     backgroundColor: Color(0xFFA779F7),
+                                          //     content: Row(
+                                          //       mainAxisAlignment:
+                                          //           MainAxisAlignment.center,
+                                          //       children: [
+                                          //         Text(
+                                          //           'بنجاح $f_name تم إنشاءحساب باسم ',
+                                          //         ),
+                                          //       ],
+                                          //     ),
+                                          //   ),
+                                          // );
+                                        }
+                                      } on FirebaseAuthException catch (e) {
+                                        if (e.code == 'weak-password') {
+                                          AnimatedSnackBar.material(
+                                            ' كلمة السر غير صالحة ',
+                                            type: AnimatedSnackBarType.error,
+                                            duration: Duration(seconds: 6),
+                                            mobileSnackBarPosition:
+                                                MobileSnackBarPosition.bottom,
+                                          ).show(context);
+                                          // ScaffoldMessenger.of(context).showSnackBar(
+                                          //   SnackBar(
+                                          //     backgroundColor: Color(0xFFA779F7),
+                                          //     content: Row(
+                                          //       mainAxisAlignment:
+                                          //           MainAxisAlignment.center,
+                                          //       children: [
+                                          //         Text('كلمة السر غير صالحة '),
+                                          //       ],
+                                          //     ),
+                                          //   ),
+                                          // );
+                                        } else if (e.code == 'invalid-email') {
+                                          AnimatedSnackBar.material(
+                                            ' البريد الإلكتروني غير صالح',
+                                            type: AnimatedSnackBarType.error,
+                                            duration: Duration(seconds: 6),
+                                            mobileSnackBarPosition:
+                                                MobileSnackBarPosition.bottom,
+                                          ).show(context);
+                                          // ScaffoldMessenger.of(context).showSnackBar(
+                                          //   SnackBar(
+                                          //     backgroundColor: Color(0xFFA779F7),
+                                          //     content: Center(
+                                          //         child: Text(
+                                          //       'البريد الإلكتروني غير صالح',
+                                          //     )),
+                                          //   ),
+                                          // );
+                                        }
+                                      }
+                                    }
+                                    setState(() {
+                                      _isLoading = true;
+                                    });
+                                  },
+                                  child: Text(
+                                    "إنشاء حساب ",
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                  ),
+                                ),
                           SizedBox(height: screenHeight * 0.038),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
@@ -392,5 +480,14 @@ class _createAccountState extends State<createAccount> {
         ),
       ),
     );
+  }
+
+  Language detectLanguage(String text) {
+    // Example language detection logic
+    if (text.contains(RegExp(r'[a-zA-Z]'))) {
+      return Language.French;
+    } else {
+      return Language.Arabic;
+    }
   }
 }
