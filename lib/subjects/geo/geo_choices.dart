@@ -32,13 +32,13 @@ class _GeoChoicesState extends State<GeoChoices> {
     // Définir manuellement l'identifiant de l'utilisateur
     //String userId = 'amouna';
 
-    // Vérifier l'existence de la question dans la collection 'Math'
-    final mathSnapshot = await FirebaseFirestore.instance
+    // Vérifier l'existence de la question dans la collection 'Geography'
+    final geoSnapshot = await FirebaseFirestore.instance
         .collection('Geography')
         .doc(widget.questionId)
         .get();
-    if (mathSnapshot.exists) {
-      // Si la question existe dans la collection 'Math'
+    if (geoSnapshot.exists) {
+      // Si la question existe dans la collection 'Geography'
       _questionStream = FirebaseFirestore.instance
           .collection('Geography')
           .doc(widget.questionId)
@@ -49,7 +49,7 @@ class _GeoChoicesState extends State<GeoChoices> {
           .collection('choices')
           .snapshots();
     } else {
-      // Si la question n'existe pas dans la collection 'Math', la chercher dans la collection 'Users'
+      // Si la question n'existe pas dans la collection 'Geography', la chercher dans la collection 'Users'
       _questionStream = FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
@@ -73,7 +73,7 @@ class _GeoChoicesState extends State<GeoChoices> {
         backgroundColor: const Color(0xFF7D79F7),
         automaticallyImplyLeading: false,
         title: Row(
-           mainAxisAlignment: MainAxisAlignment.end, 
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
               width: 30,
@@ -183,9 +183,6 @@ class _GeoChoicesState extends State<GeoChoices> {
                                     choice,
                                     textAlign: TextAlign.center,
                                   ),
-                                  onTap: () {
-                                    // Handle choice selection here
-                                  },
                                 ),
                               );
                             }).toList(),
@@ -197,7 +194,54 @@ class _GeoChoicesState extends State<GeoChoices> {
                       height: 30,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        // Create a new document in the 'historique' collection
+                        String? userId = FirebaseAuth.instance.currentUser?.uid;
+                        if (userId != null) {
+                          DocumentSnapshot<Map<String, dynamic>>
+                              questionSnapshot;
+                          var questionData;
+                          String question = '';
+
+                          // Check if the question exists in the 'Din' collection
+                          var dinQuestionSnapshot = await FirebaseFirestore
+                              .instance
+                              .collection('Geography')
+                              .doc(widget.questionId)
+                              .get();
+                          if (dinQuestionSnapshot.exists) {
+                            questionSnapshot = dinQuestionSnapshot;
+                          } else {
+                            // Check if the question exists in the 'question_added_din' collection under the user
+                            questionSnapshot = await FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(userId)
+                                .collection('question_added_geo')
+                                .doc(widget.questionId)
+                                .get();
+                          }
+
+                          if (questionSnapshot.exists) {
+                            questionData = questionSnapshot.data();
+                            question = questionData?['question'] ?? '';
+                          }
+
+                          // Add the question to the 'historique' collection
+                          await FirebaseFirestore.instance
+                              .collection('Users')
+                              .doc(userId)
+                              .collection('historique')
+                              .add({
+                            'question': question,
+                            'response': '', // Set empty response initially
+                            'responseValidation':
+                                '', // Set empty response validation initially
+                          });
+
+                          // Navigate back after adding the question to historique
+                          Navigator.pop(context);
+                        }
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xFF7D79F7)),

@@ -53,10 +53,10 @@ class _HiQuState extends State<HiQu> {
               padding: const EdgeInsets.all(4),
               child: Text(
                 'تاريخ',
-                style: GoogleFonts.radioCanada(
+                style: GoogleFonts.lateef(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 35,
                 ),
               ),
             ),
@@ -121,8 +121,8 @@ class _HiQuState extends State<HiQu> {
                                     stream: FirebaseFirestore.instance
                                         .collection('History')
                                         .snapshots(),
-                                    builder: (context, mathSnapshot) {
-                                      if (mathSnapshot.connectionState ==
+                                    builder: (context, hisSnapshot) {
+                                      if (hisSnapshot.connectionState ==
                                           ConnectionState.waiting) {
                                         return const Center(
                                           child: CircularProgressIndicator(),
@@ -132,8 +132,8 @@ class _HiQuState extends State<HiQu> {
                                           FirebaseAuth.instance.currentUser;
                                       final String? userId = user?.uid;
                                       List<QueryDocumentSnapshot>
-                                          mathDocuments =
-                                          mathSnapshot.data!.docs;
+                                          hisDocuments =
+                                          hisSnapshot.data!.docs;
 
                                       return StreamBuilder<QuerySnapshot>(
                                         stream: FirebaseFirestore.instance
@@ -157,7 +157,7 @@ class _HiQuState extends State<HiQu> {
 
                                           List<QueryDocumentSnapshot>
                                               allDocuments = [
-                                            ...mathDocuments,
+                                            ...hisDocuments,
                                             ...userDocuments
                                           ];
 

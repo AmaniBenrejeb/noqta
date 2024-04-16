@@ -53,10 +53,10 @@ class _DinQuState extends State<DinQu> {
               padding: const EdgeInsets.all(4),
               child: Text(
                 'دين',
-                style: GoogleFonts.radioCanada(
+                style: GoogleFonts.lateef(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 35,
                 ),
               ),
             ),
@@ -121,8 +121,8 @@ class _DinQuState extends State<DinQu> {
                                     stream: FirebaseFirestore.instance
                                         .collection('Din')
                                         .snapshots(),
-                                    builder: (context, mathSnapshot) {
-                                      if (mathSnapshot.connectionState ==
+                                    builder: (context, dinSnapshot) {
+                                      if (dinSnapshot.connectionState ==
                                           ConnectionState.waiting) {
                                         return const Center(
                                           child: CircularProgressIndicator(),
@@ -132,8 +132,8 @@ class _DinQuState extends State<DinQu> {
                                           FirebaseAuth.instance.currentUser;
                                       final String? userId = user?.uid;
                                       List<QueryDocumentSnapshot>
-                                          mathDocuments =
-                                          mathSnapshot.data!.docs;
+                                          dinDocuments =
+                                          dinSnapshot.data!.docs;
 
                                       return StreamBuilder<QuerySnapshot>(
                                         stream: FirebaseFirestore.instance
@@ -157,7 +157,7 @@ class _DinQuState extends State<DinQu> {
 
                                           List<QueryDocumentSnapshot>
                                               allDocuments = [
-                                            ...mathDocuments,
+                                            ...dinDocuments,
                                             ...userDocuments
                                           ];
 

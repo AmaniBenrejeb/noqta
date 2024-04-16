@@ -33,10 +33,10 @@ class _AddGeoQuestionModalState extends State<AddGeoQuestionModal> {
               padding: const EdgeInsets.all(4),
               child: Text(
                 'إضافة سؤال ',
-                style: GoogleFonts.radioCanada(
+                style: GoogleFonts.lateef(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 25,
                 ),
               ),
             ),
@@ -74,7 +74,7 @@ class _AddGeoQuestionModalState extends State<AddGeoQuestionModal> {
                 fillColor: Colors.white,
                 hintText: '*السؤال',
                 hintStyle:
-                    const TextStyle(fontSize: 15, color: Color(0xFFF2E5FF)),
+                    const TextStyle(fontSize: 15, color: Color.fromARGB(255, 191, 183, 199)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(
@@ -98,7 +98,7 @@ class _AddGeoQuestionModalState extends State<AddGeoQuestionModal> {
                 fillColor: Colors.white,
                 hintText: '*الخيار1 ',
                 hintStyle:
-                    const TextStyle(fontSize: 15, color: Color(0xFFF2E5FF)),
+                    const TextStyle(fontSize: 15, color: Color.fromARGB(255, 191, 183, 199)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(
@@ -122,7 +122,7 @@ class _AddGeoQuestionModalState extends State<AddGeoQuestionModal> {
                 fillColor: Colors.white,
                 hintText: '*الخيار2 ',
                 hintStyle:
-                    const TextStyle(fontSize: 15, color: Color(0xFFF2E5FF)),
+                    const TextStyle(fontSize: 15, color: Color.fromARGB(255, 191, 183, 199)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(
@@ -146,7 +146,7 @@ class _AddGeoQuestionModalState extends State<AddGeoQuestionModal> {
                 fillColor: Colors.white,
                 hintText: '*الخيار3 ',
                 hintStyle:
-                    const TextStyle(fontSize: 15, color: Color(0xFFF2E5FF)),
+                    const TextStyle(fontSize: 15, color: Color.fromARGB(255, 191, 183, 199)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(
@@ -170,7 +170,7 @@ class _AddGeoQuestionModalState extends State<AddGeoQuestionModal> {
                 fillColor: Colors.white,
                 hintText: '*الإجابة الصحيحة ',
                 hintStyle:
-                    const TextStyle(fontSize: 15, color: Color(0xFFF2E5FF)),
+                    const TextStyle(fontSize: 15, color: Color.fromARGB(255, 191, 183, 199)),
                 focusedBorder: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(30.0),
                   borderSide: const BorderSide(

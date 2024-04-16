@@ -32,13 +32,13 @@ class _DinChoicesState extends State<DinChoices> {
     // Définir manuellement l'identifiant de l'utilisateur
     //String userId = 'amouna';
 
-    // Vérifier l'existence de la question dans la collection 'Math'
-    final mathSnapshot = await FirebaseFirestore.instance
+    // Vérifier l'existence de la question dans la collection 'Din'
+    final dinSnapshot = await FirebaseFirestore.instance
         .collection('Din')
         .doc(widget.questionId)
         .get();
-    if (mathSnapshot.exists) {
-      // Si la question existe dans la collection 'Math'
+    if (dinSnapshot.exists) {
+      // Si la question existe dans la collection 'Din'
       _questionStream = FirebaseFirestore.instance
           .collection('Din')
           .doc(widget.questionId)
@@ -49,7 +49,7 @@ class _DinChoicesState extends State<DinChoices> {
           .collection('choices')
           .snapshots();
     } else {
-      // Si la question n'existe pas dans la collection 'Math', la chercher dans la collection 'Users'
+      // Si la question n'existe pas dans la collection 'Din', la chercher dans la collection 'Users'
       _questionStream = FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
@@ -73,7 +73,7 @@ class _DinChoicesState extends State<DinChoices> {
         backgroundColor: const Color(0xFF187F5B),
         automaticallyImplyLeading: false,
         title: Row(
-           mainAxisAlignment: MainAxisAlignment.end, 
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
               width: 30,
@@ -183,9 +183,6 @@ class _DinChoicesState extends State<DinChoices> {
                                     choice,
                                     textAlign: TextAlign.center,
                                   ),
-                                  onTap: () {
-                                    // Handle choice selection here
-                                  },
                                 ),
                               );
                             }).toList(),
@@ -197,7 +194,54 @@ class _DinChoicesState extends State<DinChoices> {
                       height: 30,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        // Create a new document in the 'historique' collection
+                        String? userId = FirebaseAuth.instance.currentUser?.uid;
+                        if (userId != null) {
+                          DocumentSnapshot<Map<String, dynamic>>
+                              questionSnapshot;
+                          var questionData;
+                          String question = '';
+
+                          // Check if the question exists in the 'Din' collection
+                          var dinQuestionSnapshot = await FirebaseFirestore
+                              .instance
+                              .collection('Din')
+                              .doc(widget.questionId)
+                              .get();
+                          if (dinQuestionSnapshot.exists) {
+                            questionSnapshot = dinQuestionSnapshot;
+                          } else {
+                            // Check if the question exists in the 'question_added_din' collection under the user
+                            questionSnapshot = await FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(userId)
+                                .collection('question_added_din')
+                                .doc(widget.questionId)
+                                .get();
+                          }
+
+                          if (questionSnapshot.exists) {
+                            questionData = questionSnapshot.data();
+                            question = questionData?['question'] ?? '';
+                          }
+
+                          // Add the question to the 'historique' collection
+                          await FirebaseFirestore.instance
+                              .collection('Users')
+                              .doc(userId)
+                              .collection('historique')
+                              .add({
+                            'question': question,
+                            'response': '', // Set empty response initially
+                            'responseValidation':
+                                '', // Set empty response validation initially
+                          });
+
+                          // Navigate back after adding the question to historique
+                          Navigator.pop(context);
+                        }
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xFF187F5B)),

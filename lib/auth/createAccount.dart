@@ -9,7 +9,6 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 
-
 enum Language { Arabic, French }
 
 class createAccount extends StatefulWidget {
@@ -36,6 +35,7 @@ class _createAccountState extends State<createAccount> {
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     return Form(
       key: _formKey,
@@ -69,7 +69,7 @@ class _createAccountState extends State<createAccount> {
                           SizedBox(height: screenHeight * 0.2),
                           Text(
                             "إنشاء حساب  ",
-                            selectionColor: Color(0xFF939393),
+                            style:GoogleFonts.amiri(textStyle:TextStyle(fontSize: 20), color: Color.fromARGB(255, 59, 53, 53)),
                           ),
                           SizedBox(height: screenHeight * 0.03),
                           Container(
@@ -218,6 +218,7 @@ class _createAccountState extends State<createAccount> {
                                     child: TextFormField(
                                       controller: _passwordController,
                                       cursorHeight: 25,
+                                      obscureText: _obscurePassword,
                                       decoration: InputDecoration(
                                         hintText: "كلمة السّر",
                                         hintStyle: TextStyle(
@@ -282,6 +283,9 @@ class _createAccountState extends State<createAccount> {
                                         password!.isEmpty ||
                                         f_name == null ||
                                         f_name!.isEmpty) {
+                                      setState(() {
+                                        _isLoading = false;
+                                      });
                                       AnimatedSnackBar.material(
                                         'يرجى ملء جميع المعلومات الشخصية',
                                         type: AnimatedSnackBarType.info,
@@ -289,7 +293,8 @@ class _createAccountState extends State<createAccount> {
                                         mobileSnackBarPosition:
                                             MobileSnackBarPosition.bottom,
                                       ).show(context);
-                                      return; // Stop further execution if fields are not filled
+
+                                      return;
                                     }
                                     if (_formKey.currentState!.validate()) {
                                       try {
@@ -341,11 +346,6 @@ class _createAccountState extends State<createAccount> {
                                             "id": _uid,
                                             "isAdmin": "false",
                                           });
-                                          await FirebaseFirestore.instance
-                                              .collection('Users')
-                                              .doc(_uid)
-                                              .collection('historique')
-                                              .add({});
 
                                           Navigator.push(
                                             context,
@@ -417,7 +417,7 @@ class _createAccountState extends State<createAccount> {
                                       }
                                     }
                                     setState(() {
-                                      _isLoading = true;
+                                      _isLoading = false;
                                     });
                                   },
                                   child: Text(
@@ -465,12 +465,12 @@ class _createAccountState extends State<createAccount> {
                 ),
                 Positioned(
                   top: screenHeight * 0.1,
-                  left: MediaQuery.of(context).size.width * 0.187,
+                  left: screenWidth * 0.19,
                   child: SimpleShadow(
                     child: Image.asset(
                       "images/braille.png",
-                      width: 250,
-                      height: 250,
+                      width: screenWidth * 0.58,
+                      height: screenHeight * 0.29,
                     ),
                   ),
                 ),

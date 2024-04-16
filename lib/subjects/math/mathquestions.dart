@@ -54,10 +54,10 @@ class _MathQuState extends State<MathQu> {
               padding: const EdgeInsets.all(4),
               child: Text(
                 'رياضيات',
-                style: GoogleFonts.radioCanada(
+                style: GoogleFonts.lateef(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 35,
                 ),
               ),
             ),

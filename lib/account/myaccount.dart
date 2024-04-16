@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:mypfe/account/answers.dart';
 import 'package:mypfe/btm_nav_bar.dart';
 import 'package:mypfe/account/settings.dart';
@@ -166,8 +167,11 @@ class _MyAccState extends State<MyAcc> {
                 ),
                 Text(
                   text,
-                  style: const TextStyle(
-                      fontSize: 20, fontWeight: FontWeight.w500),
+                  style: GoogleFonts.amiri(
+                  fontWeight: FontWeight.w400,
+                  color: Colors.black,
+                  fontSize: 25,
+                ),
                   textAlign: TextAlign.right,
                   textDirection: TextDirection.rtl,
                 ),

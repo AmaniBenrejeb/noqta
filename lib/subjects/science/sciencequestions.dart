@@ -54,10 +54,10 @@ class _ScQuState extends State<ScQu> {
               padding: const EdgeInsets.all(4),
               child: Text(
                 'علوم',
-                style: GoogleFonts.radioCanada(
+                style: GoogleFonts.lateef(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 35,
                 ),
               ),
             ),
@@ -122,8 +122,8 @@ class _ScQuState extends State<ScQu> {
                                     stream: FirebaseFirestore.instance
                                         .collection('Science')
                                         .snapshots(),
-                                    builder: (context, mathSnapshot) {
-                                      if (mathSnapshot.connectionState ==
+                                    builder: (context, scSnapshot) {
+                                      if (scSnapshot.connectionState ==
                                           ConnectionState.waiting) {
                                         return const Center(
                                           child: CircularProgressIndicator(),
@@ -131,8 +131,8 @@ class _ScQuState extends State<ScQu> {
                                       }
                                       final User? user = FirebaseAuth.instance.currentUser;
                                       final String? userId = user?.uid;
-                                      List<QueryDocumentSnapshot> mathDocuments =
-                                          mathSnapshot.data!.docs;
+                                      List<QueryDocumentSnapshot> scDocuments =
+                                          scSnapshot.data!.docs;
                                       
                                       return StreamBuilder<QuerySnapshot>(
                                         stream: FirebaseFirestore.instance
@@ -153,7 +153,7 @@ class _ScQuState extends State<ScQu> {
                                               userSnapshot.data!.docs;
 
                                           List<QueryDocumentSnapshot> allDocuments =
-                                              [...mathDocuments, ...userDocuments];
+                                              [...scDocuments, ...userDocuments];
 
                                           return ListView.builder(
                                             shrinkWrap: true,

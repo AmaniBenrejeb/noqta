@@ -53,10 +53,10 @@ class _GeoQuState extends State<GeoQu> {
               padding: const EdgeInsets.all(4),
               child: Text(
                 'جغرافيا',
-                style: GoogleFonts.radioCanada(
+                style: GoogleFonts.lateef(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  fontSize: 20,
+                  fontSize: 35,
                 ),
               ),
             ),
@@ -121,8 +121,8 @@ class _GeoQuState extends State<GeoQu> {
                                     stream: FirebaseFirestore.instance
                                         .collection('Geography')
                                         .snapshots(),
-                                    builder: (context, mathSnapshot) {
-                                      if (mathSnapshot.connectionState ==
+                                    builder: (context, geoSnapshot) {
+                                      if (geoSnapshot.connectionState ==
                                           ConnectionState.waiting) {
                                         return const Center(
                                           child: CircularProgressIndicator(),
@@ -132,8 +132,8 @@ class _GeoQuState extends State<GeoQu> {
                                           FirebaseAuth.instance.currentUser;
                                       final String? userId = user?.uid;
                                       List<QueryDocumentSnapshot>
-                                          mathDocuments =
-                                          mathSnapshot.data!.docs;
+                                          geoDocuments =
+                                          geoSnapshot.data!.docs;
 
                                       return StreamBuilder<QuerySnapshot>(
                                         stream: FirebaseFirestore.instance
@@ -157,7 +157,7 @@ class _GeoQuState extends State<GeoQu> {
 
                                           List<QueryDocumentSnapshot>
                                               allDocuments = [
-                                            ...mathDocuments,
+                                            ...geoDocuments,
                                             ...userDocuments
                                           ];
 

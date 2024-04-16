@@ -32,6 +32,7 @@ class _Login_screenState extends State<Login_screen> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
@@ -60,9 +61,12 @@ class _Login_screenState extends State<Login_screen> {
                     child: Column(
                       children: [
                         SizedBox(height: screenHeight * 0.2),
-                        Text(
-                          "تسجيل الدخول",
-                          selectionColor: Color(0xFF939393),
+                        Center(
+                          child: Text(
+                            "تسجيل الدخول",
+                            style:GoogleFonts.amiri(textStyle:TextStyle(fontSize: 20), color: Color.fromARGB(255, 59, 53, 53)),
+                            
+                          ),
                         ),
                         SizedBox(height: screenHeight * 0.03),
                         Container(
@@ -219,6 +223,9 @@ class _Login_screenState extends State<Login_screen> {
                                       email!.isEmpty ||
                                       password == null ||
                                       password!.isEmpty) {
+                                    setState(() {
+                                      _isLoading = false;
+                                    });
                                     AnimatedSnackBar.material(
                                       'يرجى ملء جميع المعلومات الشخصية',
                                       type: AnimatedSnackBarType.info,
@@ -349,13 +356,13 @@ class _Login_screenState extends State<Login_screen> {
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.1,
-                left: MediaQuery.of(context).size.width * 0.187,
+                top: screenHeight * 0.1,
+                left: screenWidth * 0.19,
                 child: SimpleShadow(
                   child: Image.asset(
                     "images/braille.png",
-                    width: 250,
-                    height: 250,
+                    width: screenWidth * 0.58,
+                    height: screenHeight * 0.29,
                   ),
                 ),
               ),

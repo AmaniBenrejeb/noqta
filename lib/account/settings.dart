@@ -34,12 +34,13 @@ class _UpdateDataState extends State<UpdateData> {
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
+    double screenWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: 90,
+        toolbarHeight: screenHeight * 0.1,
         systemOverlayStyle:
             SystemUiOverlayStyle(statusBarColor: Colors.transparent),
         elevation: 0,
@@ -72,7 +73,7 @@ class _UpdateDataState extends State<UpdateData> {
             children: [
               settingsBackground(),
               Positioned(
-                top: 120,
+               top: screenHeight * 0.14,
                 left: 0,
                 right: 0,
                 child: Divider(
@@ -104,9 +105,9 @@ class _UpdateDataState extends State<UpdateData> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
-                        height: 46,
-                        width: 370,
-                        child: Padding(
+                        height: screenHeight * 0.053,
+                        width: screenWidth * 0.9,
+                    child: Padding(
                           padding: const EdgeInsets.only(right: 10),
                           child: Directionality(
                             textDirection:
@@ -194,10 +195,10 @@ class _UpdateDataState extends State<UpdateData> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
-                        height: 46,
-                        width: 370,
+                      height: screenHeight * 0.053,
+                        width: screenWidth * 0.9,
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 14),
+                          padding: const EdgeInsets.only(right: 10),
                           child: Directionality(
                             textDirection:
                                 currentEmailLanguage == Language.Arabic
@@ -284,10 +285,10 @@ class _UpdateDataState extends State<UpdateData> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
-                        height: 46,
-                        width: 370,
+                        height: screenHeight * 0.053,
+                        width: screenWidth * 0.9,
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 14),
+                          padding: const EdgeInsets.only(right: 10),
                           child: Directionality(
                             textDirection:
                                 currentPasswordLanguage == Language.Arabic
@@ -376,10 +377,10 @@ class _UpdateDataState extends State<UpdateData> {
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
                       Container(
-                        height: 46,
-                        width: 370,
+                       height: screenHeight * 0.053,
+                        width: screenWidth * 0.9,
                         child: Padding(
-                          padding: const EdgeInsets.only(right: 14),
+                          padding: const EdgeInsets.only(right: 10),
                           child: Directionality(
                             textDirection:
                                 currentNewPasswordLanguage == Language.Arabic
@@ -456,97 +457,100 @@ class _UpdateDataState extends State<UpdateData> {
                 //condition ? expression1 : expression2
                 _isLoading
                     ? CircularProgressIndicator()
-                    : ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          minimumSize: Size(320, 50),
-                          backgroundColor: Color(0xFFA779F7),
-                        ),
-                        onPressed: () async {
-                          setState(() {
-                            _isLoading = true;
-                          });
-                          User? user = FirebaseAuth.instance.currentUser;
-
-                          if (user != null) {
-                            if (_usernameController.text.isEmpty ||
-                                _emailController.text.isEmpty ||
-                                _passwordController.text.isEmpty ||
-                                _currentPasswordController.text.isEmpty) {
-                              AnimatedSnackBar.material(
-                                'يرجى ملء جميع المعلومات الشخصية',
-                                type: AnimatedSnackBarType.info,
-                                duration: Duration(seconds: 6),
-                                mobileSnackBarPosition:
-                                    MobileSnackBarPosition.bottom,
-                              ).show(context);
-                              return;
-                            }
-
-                            try {
-                              AuthCredential credential =
-                                  EmailAuthProvider.credential(
-                                      email: user.email!,
-                                      password:
-                                          _currentPasswordController.text);
-                              await user
-                                  .reauthenticateWithCredential(credential);
-                              await user.verifyBeforeUpdateEmail(
-                                  _emailController.text);
-                              await user
-                                  .updatePassword(_passwordController.text);
-                              await user
-                                  .updateDisplayName(_usernameController.text);
-
-                              Map<String, dynamic> updatedData = {
-                                "full name": _usernameController.text,
-                                "email": _emailController.text,
-                              };
-                              FirebaseFirestore.instance
-                                  .collection('Users')
-                                  .doc(user.uid)
-                                  .update(updatedData)
-                                  .then((_) {
+                    : Container(width: screenWidth*0.9,
+  padding: EdgeInsets.symmetric(horizontal: 10),
+                      child: ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            minimumSize: Size(320, 50),
+                            backgroundColor: Color(0xFFA779F7),
+                          ),
+                          onPressed: () async {
+                            setState(() {
+                              _isLoading = true;
+                            });
+                            User? user = FirebaseAuth.instance.currentUser;
+                      
+                            if (user != null) {
+                              if (_usernameController.text.isEmpty ||
+                                  _emailController.text.isEmpty ||
+                                  _passwordController.text.isEmpty ||
+                                  _currentPasswordController.text.isEmpty) {
                                 AnimatedSnackBar.material(
-                                  'تم تحديث البيانات بنجاح',
-                                  type: AnimatedSnackBarType.success,
+                                  'يرجى ملء جميع المعلومات الشخصية',
+                                  type: AnimatedSnackBarType.info,
                                   duration: Duration(seconds: 6),
                                   mobileSnackBarPosition:
                                       MobileSnackBarPosition.bottom,
                                 ).show(context);
-                              }).catchError((error) {
+                                return;
+                              }
+                      
+                              try {
+                                AuthCredential credential =
+                                    EmailAuthProvider.credential(
+                                        email: user.email!,
+                                        password:
+                                            _currentPasswordController.text);
+                                await user
+                                    .reauthenticateWithCredential(credential);
+                                await user.verifyBeforeUpdateEmail(
+                                    _emailController.text);
+                                await user
+                                    .updatePassword(_passwordController.text);
+                                await user
+                                    .updateDisplayName(_usernameController.text);
+                      
+                                Map<String, dynamic> updatedData = {
+                                  "full name": _usernameController.text,
+                                  "email": _emailController.text,
+                                };
+                                FirebaseFirestore.instance
+                                    .collection('Users')
+                                    .doc(user.uid)
+                                    .update(updatedData)
+                                    .then((_) {
+                                  AnimatedSnackBar.material(
+                                    'تم تحديث البيانات بنجاح',
+                                    type: AnimatedSnackBarType.success,
+                                    duration: Duration(seconds: 6),
+                                    mobileSnackBarPosition:
+                                        MobileSnackBarPosition.bottom,
+                                  ).show(context);
+                                }).catchError((error) {
+                                  AnimatedSnackBar.material(
+                                    'فشل تحديث البيانات',
+                                    type: AnimatedSnackBarType.error,
+                                    duration: Duration(seconds: 6),
+                                    mobileSnackBarPosition:
+                                        MobileSnackBarPosition.bottom,
+                                  ).show(context);
+                                });
+                              } catch (e) {
+                                print('Error updating password: $e');
                                 AnimatedSnackBar.material(
-                                  'فشل تحديث البيانات',
+                                  'فشل تحديث كلمة المرور',
                                   type: AnimatedSnackBarType.error,
                                   duration: Duration(seconds: 6),
                                   mobileSnackBarPosition:
                                       MobileSnackBarPosition.bottom,
                                 ).show(context);
-                              });
-                            } catch (e) {
-                              print('Error updating password: $e');
-                              AnimatedSnackBar.material(
-                                'فشل تحديث كلمة المرور',
-                                type: AnimatedSnackBarType.error,
-                                duration: Duration(seconds: 6),
-                                mobileSnackBarPosition:
-                                    MobileSnackBarPosition.bottom,
-                              ).show(context);
+                              }
                             }
-                          }
-                          setState(() {
-                            _isLoading = false;
-                          });
-                        },
-                        child: Text(
-                          "حفظ  ",
-                          textAlign: TextAlign.center,
-                          style: GoogleFonts.radioCanada(
-                            fontSize: 30,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
+                            setState(() {
+                              _isLoading = false;
+                            });
+                          },
+                          child: Text(
+                            "حفظ  ",
+                            textAlign: TextAlign.center,
+                            style: GoogleFonts.radioCanada(
+                              fontSize: 30,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
-                      ),
+                    ),
               ]),
             ],
           ),

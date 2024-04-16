@@ -15,6 +15,7 @@ class history extends StatefulWidget {
 class _historyState extends State<history> {
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
  User? _userr = FirebaseAuth.instance.currentUser;
     var _uid = _userr!.uid;
@@ -22,7 +23,7 @@ class _historyState extends State<history> {
       extendBodyBehindAppBar: true,
       appBar: AppBar(
         automaticallyImplyLeading: false,
-        toolbarHeight: 90,
+        toolbarHeight: screenHeight * 0.1,
         systemOverlayStyle:
             SystemUiOverlayStyle(statusBarColor: Colors.transparent),
         elevation: 0,
@@ -55,7 +56,7 @@ class _historyState extends State<history> {
             children: [
             settingsBackground(),
             Positioned(
-              top: 120,
+              top: screenHeight * 0.14,
               left: 0,
               right: 0,
               child: Divider(
@@ -77,22 +78,23 @@ StreamBuilder<QuerySnapshot>(
     }
     var documents = snapshot.data!.docs;
     return ListView.builder(
-      itemCount: documents.length > 0 ? documents.length - 1 : 0,
+      itemCount: documents.length ,
       itemBuilder: (context, index) {
-        var doc = documents[index+1];
-        if (doc['question'] != "" && doc['reponse'] != "" &&doc['reponseValidation'] != "") {
-          Color borderColor = doc['reponseValidation'] != 'false'  ? Colors.green : Colors.red;
+        var doc = documents[index];
+        if (doc['question'] != "" && doc['response'] != "" &&doc['responseValidation'] != "") {
+          Color borderColor = doc['responseValidation'] != 'false'  ? Colors.green : Colors.red;
+
           return Column(
             children: [
               SizedBox(height: screenHeight * 0.05),
               Padding(
-                padding: const EdgeInsets.only(right: 25),
+                padding: const EdgeInsets.only(right: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      height: 46,
-                      width: 350,
+                          height: screenHeight * 0.053,
+                        width: screenWidth * 0.9,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
                         border: Border.all(
@@ -121,13 +123,13 @@ StreamBuilder<QuerySnapshot>(
               ),
               SizedBox(height: screenHeight * 0.015),
               Padding(
-                padding: const EdgeInsets.only(right: 25),
+                padding: const EdgeInsets.only(right: 20),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: [
                     Container(
-                      height: 46,
-                      width: 350,
+                        height: screenHeight * 0.053,
+                        width: screenWidth * 0.5,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20.0),
                        
@@ -142,7 +144,7 @@ StreamBuilder<QuerySnapshot>(
                           mainAxisAlignment: MainAxisAlignment.end,
                           children: [
                             Text(
-                              doc['reponse'],
+                              doc['response'],
                               style: GoogleFonts.radioCanada(
                                 color: Colors.black,
                                 fontSize: 17,

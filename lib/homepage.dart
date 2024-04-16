@@ -5,633 +5,183 @@ import 'package:mypfe/subjects/science/sciencequestions.dart';
 import 'package:mypfe/subjects/geo/geoquestions.dart';
 import 'package:mypfe/subjects/history/historyquestions.dart';
 import 'package:mypfe/subjects/din/dinquestions.dart';
+import 'package:google_fonts/google_fonts.dart'; // Importez la bibliothèque google_fonts
 
-
-
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
- 
-  
+class HomePage extends StatelessWidget {
+  const HomePage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    double cardWidth = MediaQuery.of(context).size.width * 0.4; // 40% de la largeur de l'écran
+
     return Scaffold(
-      body: Column(
-        // Utilisation de Column comme parent
-        children: [
-          Expanded(
-            // Utilisation de Expanded à l'intérieur de Column
-            child: Container(
-              decoration: const BoxDecoration(color: Colors.white),
-              child: Stack(
-                children: [
-                  Positioned(
-                    left: -98,
-                    top: 219,
-                    child: SizedBox(
-                      width: 506,
-                      height: 348,
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 356,
-                            top: 0,
-                            child: Container(
-                              width: 150,
-                              height: 150,
-                              decoration: const ShapeDecoration(
-                                color: Color(0xADF2E5FF),
-                                shape: OvalBorder(),
-                              ),
-                            ),
-                          ),
-                          Positioned(
-                            left: 0,
-                            top: 198,
-                            child: Container(
-                              width: 150,
-                              height: 150,
-                              decoration: const ShapeDecoration(
-                                color: Color(0xADF2E5FF),
-                                shape: OvalBorder(),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+      body: Center(
+        child: Wrap(
+          alignment: WrapAlignment.center, // Centrer les cartes horizontalement
+          runSpacing: 16.0, // Espacement vertical entre les lignes de cartes
+          children: [
+            _buildCategoryRow(
+              context,
+              'images/experiments.png',
+              'علوم',
+             const Color(0xFF79C5F7), // Couleur spécifique pour la science
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const ScQu(),
                   ),
-                  //fin BG
-                  Positioned(
-                    left: 40,
-                    top: 78,
-                    child: SizedBox(
-                      width: 600,
-                      height: 598,
-                      child: Stack(
-                        children: [
-                          Positioned(
-                            left: 0,
-                            top: 0,
-                            child: SizedBox(
-                              width: 306,
-                              height: 179,
-                              child: GestureDetector(
-                                //Tap
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const ScQu()),
-                                  );
-                                },
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      left: 0,
-                                      top: 0,
-                                      child: SizedBox(
-                                        width: 145,
-                                        height: 179,
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: 0,
-                                              top: 34,
-                                              child: Container(
-                                                width: 145,
-                                                height: 145,
-                                                decoration: ShapeDecoration(
-                                                  color: const Color(0xFF79C5F7),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  shadows: const [
-                                                    BoxShadow(
-                                                      color: Color(0x30000000),
-                                                      blurRadius: 8.10,
-                                                      offset: Offset(0, 1),
-                                                      spreadRadius: 0,
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            const Positioned(
-                                              left: 53,
-                                              top: 152,
-                                              child: Text(
-                                                'علوم',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 15,
-                                                  fontFamily: 'Radio Canada',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0,
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 0,
-                                              top: 0,
-                                              child: Container(
-                                                width: 145,
-                                                height: 145,
-                                                decoration: ShapeDecoration(
-                                                  color: const Color(0xFFF5F5F5),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  shadows: const [
-                                                    BoxShadow(
-                                                      color: Color(0x30000000),
-                                                      blurRadius: 8.10,
-                                                      offset: Offset(0, 1),
-                                                      spreadRadius: 0,
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 26,
-                                              top: 26,
-                                              child: Container(
-                                                width: 92.06,
-                                                height: 92.06,
-                                                decoration: ShapeDecoration(
-                                                  image: const DecorationImage(
-                                                    image: AssetImage(
-                                                        'images/experiments.png'),
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    //fin science
-                                    Positioned(
-                                      left: 161,
-                                      top: 0,
-                                      child: SizedBox(
-                                        width: 145,
-                                        height: 179,
-                                        child: GestureDetector(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      const MathQu()),
-                                            );
-                                          },
-                                          child: Stack(
-                                            children: [
-                                              Positioned(
-                                                left: 0,
-                                                top: 34,
-                                                child: Container(
-                                                  width: 145,
-                                                  height: 145,
-                                                  decoration: ShapeDecoration(
-                                                    color: const Color(0xFFD27AFA),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                    ),
-                                                    shadows: const [
-                                                      BoxShadow(
-                                                        color:
-                                                            Color(0x30000000),
-                                                        blurRadius: 8.10,
-                                                        offset: Offset(0, 1),
-                                                        spreadRadius: 0,
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Positioned(
-                                                left: 0,
-                                                top: 0,
-                                                child: Container(
-                                                  width: 145,
-                                                  height: 145,
-                                                  decoration: ShapeDecoration(
-                                                    color: const Color(0xFFF5F5F5),
-                                                    shape:
-                                                        RoundedRectangleBorder(
-                                                      borderRadius:
-                                                          BorderRadius.circular(
-                                                              20),
-                                                    ),
-                                                    shadows: const [
-                                                      BoxShadow(
-                                                        color:
-                                                            Color(0x30000000),
-                                                        blurRadius: 8.10,
-                                                        offset: Offset(0, 1),
-                                                        spreadRadius: 0,
-                                                      )
-                                                    ],
-                                                  ),
-                                                ),
-                                              ),
-                                              Positioned(
-                                                left: 33,
-                                                top: 34,
-                                                child: Container(
-                                                  width: 78,
-                                                  height: 78,
-                                                  decoration: const BoxDecoration(
-                                                    image: DecorationImage(
-                                                      image: AssetImage(
-                                                          'images/calculator.png'),
-                                                      fit: BoxFit.fill,
-                                                    ),
-                                                  ),
-                                                ),
-                                              ),
-                                              const Positioned(
-                                                left: 45,
-                                                top: 152,
-                                                child: Text(
-                                                  'رياضيات',
-                                                  style: TextStyle(
-                                                    color: Colors.white,
-                                                    fontSize: 15,
-                                                    fontFamily: 'Radio Canada',
-                                                    fontWeight: FontWeight.w700,
-                                                    height: 0,
-                                                  ),
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          //fin math
-                          Positioned(
-                            left: 161,
-                            top: 426,
-                            child: SizedBox(
-                              width: 145,
-                              height: 172,
-                              child: GestureDetector(
-                                onTap: () {
-                                  Navigator.push(
-                                    context,
-                                    MaterialPageRoute(
-                                        builder: (context) => const DinQu()),
-                                  );
-                                },
-                                child: Stack(
-                                  children: [
-                                    Positioned(
-                                      left: 0,
-                                      top: 27,
-                                      child: Container(
-                                        width: 145,
-                                        height: 145,
-                                        decoration: ShapeDecoration(
-                                          color: const Color(0xFF187F5B),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          shadows: const [
-                                            BoxShadow(
-                                              color: Color(0x30000000),
-                                              blurRadius: 8.10,
-                                              offset: Offset(0, 1),
-                                              spreadRadius: 0,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: 0,
-                                      top: 0,
-                                      child: Container(
-                                        width: 145,
-                                        height: 137,
-                                        decoration: ShapeDecoration(
-                                          color: const Color(0xFFF5F5F5),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                          shadows: const [
-                                            BoxShadow(
-                                              color: Color(0x30000000),
-                                              blurRadius: 8.10,
-                                              offset: Offset(0, 1),
-                                              spreadRadius: 0,
-                                            )
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                    Positioned(
-                                      left: 22,
-                                      top: 19,
-                                      child: Container(
-                                        width: 100,
-                                        height: 100,
-                                        decoration: ShapeDecoration(
-                                          image: const DecorationImage(
-                                            image:
-                                                AssetImage('images/quran.png'),
-                                            fit: BoxFit.fill,
-                                          ),
-                                          shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(20),
-                                          ),
-                                        ),
-                                      ),
-                                    ),
-                                    const Positioned(
-                                      left: 64,
-                                      top: 143,
-                                      child: Text(
-                                        'دين',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 15,
-                                          fontFamily: 'Radio Canada',
-                                          fontWeight: FontWeight.w700,
-                                          height: 0,
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          ),
-                          //fin din
-                          Positioned(
-                            left: 0,
-                            top: 215,
-                            child: SizedBox(
-                              width: 600,
-                              height: 598,
-                              child: Stack(
-                                children: [
-                                  Positioned(
-                                    left: 161,
-                                    top: 0,
-                                    child: SizedBox(
-                                      width: 600,
-                                      height: 598,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => const GeoQu ()),
-                                          );
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: 0,
-                                              top: 33,
-                                              child: Container(
-                                                width: 145,
-                                                height: 145,
-                                                decoration: ShapeDecoration(
-                                                  color: const Color(0xFF7D79F7),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  shadows: const [
-                                                    BoxShadow(
-                                                      color: Color(0x30000000),
-                                                      blurRadius: 8.10,
-                                                      offset: Offset(0, 1),
-                                                      spreadRadius: 0,
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 0,
-                                              top: 0,
-                                              child: Container(
-                                                width: 145,
-                                                height: 145,
-                                                decoration: ShapeDecoration(
-                                                  color: const Color(0xFFF5F5F5),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  shadows: const [
-                                                    BoxShadow(
-                                                      color: Color(0x30000000),
-                                                      blurRadius: 8.10,
-                                                      offset: Offset(0, 1),
-                                                      spreadRadius: 0,
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 27,
-                                              top: 22,
-                                              child: Container(
-                                                width: 100,
-                                                height: 100,
-                                                decoration: ShapeDecoration(
-                                                  image: const DecorationImage(
-                                                    image: AssetImage(
-                                                        'images/geography.png'),
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            const Positioned(
-                                              left: 52,
-                                              top: 153,
-                                              child: Text(
-                                                'جغرافيا',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 15,
-                                                  fontFamily: 'Radio Canada',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  //fin geo
-                                  Positioned(
-                                    left: 0,
-                                    top: 0,
-                                    child: SizedBox(
-                                      width: 600,
-                                      height: 598,
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          Navigator.push(
-                                            context,
-                                            MaterialPageRoute(
-                                                builder: (context) => const HiQu()),
-                                          );
-                                        },
-                                        child: Stack(
-                                          children: [
-                                            Positioned(
-                                              left: 0,
-                                              top: 33,
-                                              child: Container(
-                                                width: 145,
-                                                height: 145,
-                                                decoration: ShapeDecoration(
-                                                  color: const Color(0xFFFED159),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  shadows: const [
-                                                    BoxShadow(
-                                                      color: Color(0x30000000),
-                                                      blurRadius: 8.10,
-                                                      offset: Offset(0, 1),
-                                                      spreadRadius: 0,
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 0,
-                                              top: 0,
-                                              child: Container(
-                                                width: 145,
-                                                height: 145,
-                                                decoration: ShapeDecoration(
-                                                  color: const Color(0xFFF5F5F5),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                  shadows: const [
-                                                    BoxShadow(
-                                                      color: Color(0x30000000),
-                                                      blurRadius: 8.10,
-                                                      offset: Offset(0, 1),
-                                                      spreadRadius: 0,
-                                                    )
-                                                  ],
-                                                ),
-                                              ),
-                                            ),
-                                            Positioned(
-                                              left: 22,
-                                              top: 22,
-                                              child: Container(
-                                                width: 100,
-                                                height: 100,
-                                                decoration: ShapeDecoration(
-                                                  image: const DecorationImage(
-                                                    image: AssetImage(
-                                                        'images/history.png'),
-                                                    fit: BoxFit.fill,
-                                                  ),
-                                                  shape: RoundedRectangleBorder(
-                                                    borderRadius:
-                                                        BorderRadius.circular(
-                                                            20),
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                            const Positioned(
-                                              left: 56,
-                                              top: 153,
-                                              child: Text(
-                                                'تاريخ',
-                                                style: TextStyle(
-                                                  color: Colors.white,
-                                                  fontSize: 15,
-                                                  fontFamily: 'Radio Canada',
-                                                  fontWeight: FontWeight.w700,
-                                                  height: 0,
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                  //fin history
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                );
+              },
+              cardWidth,
+            ),
+            _buildCategoryRow(
+              context,
+              'images/calculator.png',
+              'رياضيات',
+             const  Color(0xFFD27AFA), // Couleur spécifique pour les mathématiques
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const MathQu(),
                   ),
-                ],
+                );
+              },
+              cardWidth,
+            ),
+            _buildCategoryRow(
+              context,
+              'images/quran.png',
+              'دين',
+             const  Color(0xFF187F5B), // Couleur spécifique pour la religion
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const DinQu(),
+                  ),
+                );
+              },
+              cardWidth,
+            ),
+            _buildCategoryRow(
+              context,
+              'images/geography.png',
+              'جغرافيا',
+             const Color(0xFF7D79F7), // Couleur spécifique pour la géographie
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const GeoQu(),
+                  ),
+                );
+              },
+              cardWidth,
+            ),
+            _buildCategoryRow(
+              context,
+              'images/history.png',
+              'تاريخ',
+             const Color(0xFFFED159), // Couleur spécifique pour l'histoire
+              () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const HiQu(),
+                  ),
+                );
+              },
+              cardWidth,
+            ),
+          ],
+        ),
+      ),
+      bottomNavigationBar: const BottomNavBar(),
+    );
+  }
+
+  Widget _buildCategoryRow(
+    BuildContext context,
+    String imagePath,
+    String label,
+    Color color, // Ajoutez un paramètre de couleur
+    VoidCallback onPressed,
+    double cardWidth,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 8.0), // Ajouter un padding horizontal pour espacer les paires de cartes
+      child: SizedBox(
+        width: cardWidth,
+        child: Stack(
+          children: [
+            // Carte colorée
+            Positioned(
+              top:0 ,
+              bottom: cardWidth *0.5,
+              left: 0,
+              right: 0,
+              child: Container(
+                height: cardWidth * 0.5 , // Hauteur de la carte colorée
+                decoration: BoxDecoration(
+                  color: color, // Couleur spécifique pour chaque sujet
+                  borderRadius: BorderRadius.circular(20),
+                ),
               ),
             ),
-          ),
-        ],
+            // Carte principale
+            _buildCategoryButton(
+              context,
+              imagePath,
+              label,
+              onPressed,
+              cardWidth,
+            ),
+          ],
+        ),
       ),
-      //navigation bar
-      bottomNavigationBar: BottomNavBar(),
+    );
+  }
 
-      
+  Widget _buildCategoryButton(
+    BuildContext context,
+    String imagePath,
+    String label,
+    VoidCallback onPressed,
+    double cardWidth,
+  ) {
+    return GestureDetector(
+      onTap: onPressed,
+      child: Card(
+        elevation: 4,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: SizedBox(
+          width: cardWidth,
+          height: cardWidth * 1.2, // Garder le ratio hauteur-largeur pour ne pas déformer les images
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Image.asset(
+                imagePath,
+                width: cardWidth * 0.6, // 60% de la largeur de la carte
+                height: cardWidth * 0.6, // 60% de la largeur de la carte pour garder le ratio
+                fit: BoxFit.contain, // Ajuster l'image pour tenir dans la boîte en conservant ses proportions
+              ),
+              const SizedBox(height: 8),
+              Text(
+                label,
+                style: GoogleFonts.lateef( // Utilisez GoogleFonts.lateef pour appliquer la police Lateef
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
     );
   }
 }

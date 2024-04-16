@@ -73,7 +73,7 @@ class _MathChoicesState extends State<MathChoices> {
         backgroundColor: const Color(0xFFD27AFA),
         automaticallyImplyLeading: false,
         title: Row(
-           mainAxisAlignment: MainAxisAlignment.end, 
+          mainAxisAlignment: MainAxisAlignment.end,
           children: [
             Container(
               width: 30,
@@ -183,9 +183,6 @@ class _MathChoicesState extends State<MathChoices> {
                                     choice,
                                     textAlign: TextAlign.center,
                                   ),
-                                  onTap: () {
-                                    // Handle choice selection here
-                                  },
                                 ),
                               );
                             }).toList(),
@@ -197,7 +194,54 @@ class _MathChoicesState extends State<MathChoices> {
                       height: 30,
                     ),
                     ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () async {
+                        // Create a new document in the 'historique' collection
+                        String? userId = FirebaseAuth.instance.currentUser?.uid;
+                        if (userId != null) {
+                          DocumentSnapshot<Map<String, dynamic>>
+                              questionSnapshot;
+                          var questionData;
+                          String question = '';
+
+                          // Check if the question exists in the 'Din' collection
+                          var dinQuestionSnapshot = await FirebaseFirestore
+                              .instance
+                              .collection('Math')
+                              .doc(widget.questionId)
+                              .get();
+                          if (dinQuestionSnapshot.exists) {
+                            questionSnapshot = dinQuestionSnapshot;
+                          } else {
+                            // Check if the question exists in the 'question_added_din' collection under the user
+                            questionSnapshot = await FirebaseFirestore.instance
+                                .collection('Users')
+                                .doc(userId)
+                                .collection('question_added_math')
+                                .doc(widget.questionId)
+                                .get();
+                          }
+
+                          if (questionSnapshot.exists) {
+                            questionData = questionSnapshot.data();
+                            question = questionData?['question'] ?? '';
+                          }
+
+                          // Add the question to the 'historique' collection
+                          await FirebaseFirestore.instance
+                              .collection('Users')
+                              .doc(userId)
+                              .collection('historique')
+                              .add({
+                            'question': question,
+                            'response': '', // Set empty response initially
+                            'responseValidation':
+                                '', // Set empty response validation initially
+                          });
+
+                          // Navigate back after adding the question to historique
+                          Navigator.pop(context);
+                        }
+                      },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xFFD27AFA)),
