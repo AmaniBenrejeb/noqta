@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -19,8 +20,10 @@ class _AddDinQuestionModalState extends State<AddDinQuestionModal> {
 
   @override
   Widget build(BuildContext context) {
+    double screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       appBar: AppBar(
+       toolbarHeight: screenHeight * 0.11,
         backgroundColor: const Color(0xFF187F5B),
         automaticallyImplyLeading: false,
         title: Row(
@@ -189,7 +192,7 @@ class _AddDinQuestionModalState extends State<AddDinQuestionModal> {
             ElevatedButton(
               onPressed: () {
                 addQuestionToDatabase();
-                Navigator.pop(context);
+                // Navigator.pop(context);
               },
               style: ButtonStyle(
                 backgroundColor:
@@ -214,23 +217,12 @@ class _AddDinQuestionModalState extends State<AddDinQuestionModal> {
         choice2Controller.text.isEmpty ||
         choice3Controller.text.isEmpty ||
         correctAnswerController.text.isEmpty) {
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: const Text('Erreur'),
-            content: const Text('يجب إكمال جميع الحقول'),
-            actions: <Widget>[
-              TextButton(
-                child: const Text('OK'),
-                onPressed: () {
-                  Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
-      );
+       AnimatedSnackBar.material(
+        '  يرجى ملء جميع الحقول',
+        type: AnimatedSnackBarType.info,
+        duration: Duration(seconds: 6),
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+      ).show(context);
     } else {
       final User? user = FirebaseAuth.instance.currentUser;
       final String? userId = user?.uid;
@@ -251,6 +243,7 @@ class _AddDinQuestionModalState extends State<AddDinQuestionModal> {
         // Gérer les erreurs ici
         print('Erreur lors d ajout de la question: $error');
       });
+      Navigator.pop(context);
     }
   }
 }

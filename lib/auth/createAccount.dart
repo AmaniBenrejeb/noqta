@@ -12,7 +12,8 @@ import 'package:animated_snack_bar/animated_snack_bar.dart';
 enum Language { Arabic, French }
 
 class createAccount extends StatefulWidget {
-  const createAccount({Key? key});
+  const createAccount({Key? key}) : super(key: key);
+
 
   @override
   State<createAccount> createState() => _createAccountState();
@@ -42,10 +43,32 @@ class _createAccountState extends State<createAccount> {
       child: Scaffold(
         extendBodyBehindAppBar: true,
         appBar: AppBar(
+          title: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+           
+            
+               IconButton(
+                icon: Image.asset(
+                  'images/next.png',
+                  width: 30,
+                  height: 30,
+                  color: Color.fromARGB(255, 222, 218, 224)
+                
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            
+          ],
+        ),
+          automaticallyImplyLeading: false,
           systemOverlayStyle:
               SystemUiOverlayStyle(statusBarColor: Colors.transparent),
           elevation: 0,
           backgroundColor: Colors.transparent,
+        
         ),
         body: SingleChildScrollView(
           child: SizedBox(
@@ -312,21 +335,21 @@ class _createAccountState extends State<createAccount> {
                                             duration: Duration(seconds: 6),
                                             mobileSnackBarPosition:
                                                 MobileSnackBarPosition.bottom,
-                                          ).show(context);
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(
-                                            SnackBar(
-                                              backgroundColor:
-                                                  Color(0xFFA779F7),
-                                              content: Row(
-                                                mainAxisAlignment:
-                                                    MainAxisAlignment.center,
-                                                children: [
-                                                  Text(
-                                                      'هذا البريد الإلكتروني مستخدم بالفعل'),
-                                                ],
-                                              ),
-                                            ),
+                                          // ).show(context);
+                                          // ScaffoldMessenger.of(context)
+                                          //     .showSnackBar(
+                                          //   SnackBar(
+                                          //     backgroundColor:
+                                          //         Color(0xFFA779F7),
+                                          //     content: Row(
+                                          //       mainAxisAlignment:
+                                          //           MainAxisAlignment.center,
+                                          //       children: [
+                                          //         Text(
+                                          //             'هذا البريد الإلكتروني مستخدم بالفعل'),
+                                          //       ],
+                                          //     ),
+                                          //   ),
                                           );
                                         } else {
                                           await FirebaseAuth.instance
@@ -465,7 +488,7 @@ class _createAccountState extends State<createAccount> {
                 ),
                 Positioned(
                   top: screenHeight * 0.1,
-                  left: screenWidth * 0.19,
+                  left: screenWidth * 0.21,
                   child: SimpleShadow(
                     child: Image.asset(
                       "images/braille.png",

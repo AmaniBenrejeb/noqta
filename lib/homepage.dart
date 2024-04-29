@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 import 'package:mypfe/btm_nav_bar.dart';
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:mypfe/subjects/math/mathquestions.dart';
 import 'package:mypfe/subjects/science/sciencequestions.dart';
 import 'package:mypfe/subjects/geo/geoquestions.dart';
@@ -7,14 +9,120 @@ import 'package:mypfe/subjects/history/historyquestions.dart';
 import 'package:mypfe/subjects/din/dinquestions.dart';
 import 'package:google_fonts/google_fonts.dart'; // Importez la bibliothèque google_fonts
 
-class HomePage extends StatelessWidget {
-  const HomePage({Key? key}) : super(key: key);
+
+import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter_blue/flutter_blue.dart';
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+  BluetoothDevice? targetDevice;
+  BluetoothCharacteristic? targetCharacteristic;
+  List<int> receivedData = [1];
+  var bluetoothName = "ESP32_BLE";
+
+  Future<void> scanAndConnect() async {
+    try {
+      if (await Permission.bluetoothScan.request().isGranted &&
+          await Permission.bluetoothConnect.request().isGranted &&
+          await Permission.location.request().isGranted) {
+        // Permissions granted, proceed with scanning and connecting
+        await startScan();
+      } else {
+        print('Permissions not granted');
+      }
+    } catch (e) {
+      print('Error during scanning: $e');
+    }
+  }
+
+  Future<void> startScan() async {
+    StreamSubscription<ScanResult>? scanSubscription;
+    Timer? timeoutTimer;
+
+    const int scanTimeout = 60;
+
+    scanSubscription = flutterBlue.scan().listen((scanResult) {
+      if (scanResult.device.name == '$bluetoothName') {
+        targetDevice = scanResult.device;
+        scanSubscription?.cancel();
+        timeoutTimer?.cancel();
+        print('Target device found and scanning stopped.');
+         
+        connectToDevice();
+        AnimatedSnackBar.material(
+        'تم العثور على الجهاز المستهدف ,جهازك متصل بالبلوتوث',
+        type: AnimatedSnackBarType.success,
+        duration: Duration(seconds: 6),
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+      ).show(context);
+      }
+    });
+
+    timeoutTimer = Timer(Duration(seconds: scanTimeout), () {
+      scanSubscription?.cancel();
+      flutterBlue.stopScan();
+      print('Scanning timed out. Target device not found.');
+       AnimatedSnackBar.material(
+   'لم يتم العثور على الجهاز المستهدف',
+        type: AnimatedSnackBarType.error,
+        duration: Duration(seconds: 6),
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+      ).show(context);
+    });
+  }
+
+  Future<void> connectToDevice() async {
+    if (targetDevice != null) {
+      try {
+        await targetDevice!.connect();
+        discoverServices();
+      } catch (e) {
+        print('Error connecting to device: $e');
+      }
+    }
+  }
+void discoverServices() async {
+    List<BluetoothService> services = await targetDevice!.discoverServices();
+    services.forEach((service) {
+      service.characteristics.forEach((characteristic) {
+        if (characteristic.uuid.toString() == "e844e406-79f7-443e-8d29-9cfe8933304d"
+               
+            ) {
+          targetCharacteristic = characteristic;
+          subscribeToCharacteristic();
+        }
+      });
+    });
+  }
+
+  void subscribeToCharacteristic() async {
+    if (targetCharacteristic != null) {
+      await targetCharacteristic!.setNotifyValue(true);
+      targetCharacteristic!.value.listen((value) {
+        setState(() {
+          receivedData = value;
+          print('value is: $value');
+        });
+      });
+    }
+  }
+ @override
+  void initState() {
+    super.initState();
+    scanAndConnect();
+ 
+  }
 
   @override
   Widget build(BuildContext context) {
-    double cardWidth = MediaQuery.of(context).size.width * 0.4; // 40% de la largeur de l'écran
-
-    return Scaffold(
+    double cardWidth = MediaQuery.of(context).size.width * 0.4; 
+    return  Scaffold(
       body: Center(
         child: Wrap(
           alignment: WrapAlignment.center, // Centrer les cartes horizontalement

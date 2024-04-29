@@ -26,6 +26,33 @@ class _ResetPasswordState extends State<ResetPassword> {
     return Scaffold(
       extendBodyBehindAppBar: true,
       appBar: AppBar(
+        automaticallyImplyLeading: false,
+        title: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(right: 190),
+            ),
+            Container(
+              width: 30,
+              height: 30,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: Color(0x49D9D9D9),
+              ),
+              child: IconButton(
+                icon: Image.asset(
+                  'images/next.png',
+                  width: 25,
+                  height: 25,
+                ),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+            ),
+          ],
+        ),
         systemOverlayStyle:
             SystemUiOverlayStyle(statusBarColor: Colors.transparent),
         elevation: 0,
@@ -44,7 +71,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 child: Text(
                   "إعادة تعيين كلمة السر",
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.montserratAlternates(
+                  style: GoogleFonts.amiri(
                     fontSize: 32,
                     fontWeight: FontWeight.w700,
                     color: Colors.black,
@@ -58,7 +85,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                 child: Text(
                   "استعيد حسابك عن طريق إعادة تعيين كلمة السر الخاصة بك",
                   textAlign: TextAlign.right,
-                  style: GoogleFonts.montserrat(
+                  style: GoogleFonts.amiri(
                     fontSize: 14,
                     fontWeight: FontWeight.w400,
                   ),
@@ -138,7 +165,7 @@ class _ResetPasswordState extends State<ResetPassword> {
                           },
                           child: Text(
                             "إعادة تعيين كلمة السر",
-                            style: GoogleFonts.montserrat(
+                            style: GoogleFonts.amiri(
                               color: Colors.white,
                               fontSize: 18,
                               fontWeight: FontWeight.w600,
