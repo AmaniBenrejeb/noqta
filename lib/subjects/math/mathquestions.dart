@@ -17,14 +17,13 @@ class _MathQuState extends State<MathQu> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor:  Color(0xFFD27AFA),
+        backgroundColor: Color(0xFFD27AFA),
         automaticallyImplyLeading: false,
         title: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Padding(
-              padding: const EdgeInsets.only(
-                  right: 190), 
+              padding: const EdgeInsets.only(right: 190),
               child: Container(
                 width: 30,
                 height: 30,
@@ -57,7 +56,7 @@ class _MathQuState extends State<MathQu> {
                 style: GoogleFonts.lateef(
                   fontWeight: FontWeight.w700,
                   color: Colors.white,
-                  fontSize: 35,
+                  fontSize: 30,
                 ),
               ),
             ),
