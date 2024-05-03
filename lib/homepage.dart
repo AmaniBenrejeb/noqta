@@ -1,20 +1,89 @@
+import 'dart:async';
+
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_blue/flutter_blue.dart';
 import 'package:mypfe/btm_nav_bar.dart';
 import 'package:mypfe/subjects/math/mathquestions.dart';
 import 'package:mypfe/subjects/science/sciencequestions.dart';
 import 'package:mypfe/subjects/geo/geoquestions.dart';
 import 'package:mypfe/subjects/history/historyquestions.dart';
 import 'package:mypfe/subjects/din/dinquestions.dart';
+
 import 'package:google_fonts/google_fonts.dart'; // Importez la bibliothèque google_fonts
 
 class HomePage extends StatefulWidget {
-  const HomePage({super.key});
-
   @override
-  State<HomePage> createState() => _HomePageState();
+  _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+  FlutterBlue flutterBlue = FlutterBlue.instance;
+  BluetoothDevice? connectedDevice;
+
+  @override
+  void initState() {
+    super.initState();
+    connectToPeripheral();
+  }
+
+  void connectToPeripheral() async {
+    bool foundPeripheral = false;
+    StreamSubscription<List<ScanResult>>? scanSubscription; // Initialize as null
+
+    flutterBlue.startScan(timeout: Duration(seconds: 60));
+
+    // Listen for scan results
+    scanSubscription = flutterBlue.scanResults.listen((List<ScanResult> results) {
+      for (ScanResult result in results) {
+        if (result.device.name == "ESP32") {
+          // Stop scanning as the device is found
+          flutterBlue.stopScan();
+          scanSubscription!.cancel(); // Cancel the subscription
+          connectToDevice(result.device);
+          foundPeripheral = true;
+          break;
+        }
+      }
+    });
+
+    // Wait for 60 seconds
+    await Future.delayed(Duration(seconds: 60));
+
+    // Stop scanning after 60 seconds if device not found
+    flutterBlue.stopScan();
+    if (scanSubscription != null) {
+      scanSubscription.cancel(); // Cancel the subscription if it's not null
+    }
+
+    if (!foundPeripheral) {
+      // Display snackbar if device not found
+      AnimatedSnackBar.material(
+        'لم يتم العثور على لوح نقطة',
+        type: AnimatedSnackBarType.error,
+        duration: Duration(seconds: 6),
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+      ).show(context);
+    }
+  }
+
+  void connectToDevice(BluetoothDevice device) {
+    device.connect().then((value) {
+      setState(() {
+        connectedDevice = device;
+      });
+      AnimatedSnackBar.material(
+        'جهازك متصل بلوح نقطة',
+        type: AnimatedSnackBarType.success,
+        duration: Duration(seconds: 6),
+        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+      ).show(context);
+    });
+  }
+  // Method to disconnect from the ESP32 device
+ 
+
+
   @override
   Widget build(BuildContext context) {
     double cardWidth = MediaQuery.of(context).size.width * 0.4;

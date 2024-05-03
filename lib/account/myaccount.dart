@@ -168,10 +168,10 @@ class _MyAccState extends State<MyAcc> {
                 Text(
                   text,
                   style: GoogleFonts.amiri(
-                  fontWeight: FontWeight.w400,
-                  color: Colors.black,
-                  fontSize: 25,
-                ),
+                    fontWeight: FontWeight.w400,
+                    color: Colors.black,
+                    fontSize: 25,
+                  ),
                   textAlign: TextAlign.right,
                   textDirection: TextDirection.rtl,
                 ),

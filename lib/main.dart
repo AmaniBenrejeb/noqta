@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData.light(useMaterial3: true),
       home: initialScreen,
       routes: {
-        "/home": (context) => const HomePage(),
+        "/home": (context) =>  HomePage(),
         "/math": (context) => const MathQu(),
         "/science":(context) => const ScQu(),
         "/geo":(context) => const GeoQu(),
