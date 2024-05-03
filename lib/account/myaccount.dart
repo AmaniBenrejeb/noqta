@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:mypfe/BluetoothProvider.dart';
 import 'package:mypfe/account/answers.dart';
 import 'package:mypfe/btm_nav_bar.dart';
 import 'package:mypfe/account/settings.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:mypfe/auth/login_screen.dart';
+import 'package:provider/provider.dart';
 
 class MyAcc extends StatefulWidget {
-  const MyAcc({super.key});
+  const MyAcc({Key? key}) : super(key: key);
 
   @override
   State<MyAcc> createState() => _MyAccState();
 }
 
 class _MyAccState extends State<MyAcc> {
+
+void disconnectFromDevice() {
+  final bluetoothProvider = Provider.of<BluetoothProvider>(context, listen: false);
+  bluetoothProvider.disconnectFromDevice();
+}
+
+
   @override
   Widget build(BuildContext context) {
     double screenHeight = MediaQuery.of(context).size.height;
@@ -132,51 +141,55 @@ class _MyAccState extends State<MyAcc> {
   Widget buildRow(
       BuildContext context, String imagePath, String text, IconData icon) {
     return GestureDetector(
-        onTap: () {
-          if (imagePath == "images/answer.png") {
-            // Navigate to the page for "الإجابات" (Answers)
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const history()),
-            );
-          } else if (imagePath == "images/setting.png") {
-            // Navigate to the page for "الإعدادات" (Settings)
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const UpdateData()),
-            );
-          } else if (imagePath == "images/logout.png") {
-            //  "خروج" (Logout)
-            FirebaseAuth.instance.signOut();
-            Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) =>
-                        Login_screen())); // Redirection vers l'écran de connexion
-          }
-        },
-        child: SizedBox(
-            width: 350,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Icon(
-                  icon,
-                  size: 24,
-                  color: const Color(0xFFF2E5FF),
-                ),
-                Text(
-                  text,
-                  style: GoogleFonts.amiri(
-                    fontWeight: FontWeight.w400,
-                    color: Colors.black,
-                    fontSize: 25,
-                  ),
-                  textAlign: TextAlign.right,
-                  textDirection: TextDirection.rtl,
-                ),
-                Image.asset(imagePath, width: 25, height: 25),
-              ],
-            )));
+      onTap: () async {
+        if (imagePath == "images/answer.png") {
+          // Navigate to the page for "الإجابات" (Answers)
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const history()),
+          );
+        } else if (imagePath == "images/setting.png") {
+          // Navigate to the page for "الإعدادات" (Settings)
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const UpdateData()),
+          );
+        } else if (imagePath == "images/logout.png") {
+          //  "خروج" (Logout)
+           disconnectFromDevice(); // Disconnect from Bluetooth device
+          FirebaseAuth.instance.signOut();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => Login_screen(),
+            ),
+          ); // Redirection vers l'écran de connexion
+        }
+      },
+      child: SizedBox(
+        width: 350,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Icon(
+              icon,
+              size: 24,
+              color: const Color(0xFFF2E5FF),
+            ),
+            Text(
+              text,
+              style: GoogleFonts.amiri(
+                fontWeight: FontWeight.w400,
+                color: Colors.black,
+                fontSize: 25,
+              ),
+              textAlign: TextAlign.right,
+              textDirection: TextDirection.rtl,
+            ),
+            Image.asset(imagePath, width: 25, height: 25),
+          ],
+        ),
+      ),
+    );
   }
 }

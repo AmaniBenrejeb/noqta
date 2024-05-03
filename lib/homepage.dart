@@ -1,88 +1,113 @@
 import 'dart:async';
-
 import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
+import 'package:mypfe/BluetoothProvider.dart';
 import 'package:mypfe/btm_nav_bar.dart';
 import 'package:mypfe/subjects/math/mathquestions.dart';
 import 'package:mypfe/subjects/science/sciencequestions.dart';
 import 'package:mypfe/subjects/geo/geoquestions.dart';
 import 'package:mypfe/subjects/history/historyquestions.dart';
 import 'package:mypfe/subjects/din/dinquestions.dart';
-
+import 'package:permission_handler/permission_handler.dart';
 import 'package:google_fonts/google_fonts.dart'; // Importez la bibliothèque google_fonts
-
+import 'package:provider/provider.dart';
 class HomePage extends StatefulWidget {
+  const HomePage({Key? key});
+
   @override
-  _HomePageState createState() => _HomePageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
   FlutterBlue flutterBlue = FlutterBlue.instance;
-  BluetoothDevice? connectedDevice;
+  StreamSubscription<ScanResult>? scanSubscription;
+  var bluetoothName = "Noqta";
 
-  @override
-  void initState() {
-    super.initState();
-    connectToPeripheral();
+  Future<void> scanAndConnect() async {
+    try {
+      if (await Permission.bluetoothScan.request().isGranted &&
+          await Permission.bluetoothConnect.request().isGranted &&
+          await Permission.location.request().isGranted) {
+        await cancelExistingScan();
+        // Permissions granted, proceed with scanning and connecting
+        await startScan();
+      } else {
+        print('Permissions not granted');
+      }
+    } catch (e) {
+      print('Error during scanning: $e');
+    }
   }
 
-  void connectToPeripheral() async {
-    bool foundPeripheral = false;
-    StreamSubscription<List<ScanResult>>? scanSubscription; // Initialize as null
+  Future<void> cancelExistingScan() async {
+    if (scanSubscription != null) {
+      await scanSubscription!.cancel();
+      scanSubscription = null;
+      print('Existing scan canceled.');
+    }
+  }
 
-    flutterBlue.startScan(timeout: Duration(seconds: 60));
+  Future<void> startScan() async {
+    Timer? timeoutTimer;
 
-    // Listen for scan results
-    scanSubscription = flutterBlue.scanResults.listen((List<ScanResult> results) {
-      for (ScanResult result in results) {
-        if (result.device.name == "ESP32") {
-          // Stop scanning as the device is found
-          flutterBlue.stopScan();
-          scanSubscription!.cancel(); // Cancel the subscription
-          connectToDevice(result.device);
-          foundPeripheral = true;
-          break;
-        }
+    const int scanTimeout = 20;
+    if (scanSubscription != null) {
+      // Cancel the existing scan if it's still active
+      scanSubscription!.cancel();
+    }
+    scanSubscription = flutterBlue.scan().listen((scanResult) async {
+      if (scanResult.device.name == bluetoothName) {
+        final bluetoothProvider =
+            Provider.of<BluetoothProvider>(context, listen: false);
+        bluetoothProvider.scannedDevice = scanResult.device;
+        await bluetoothProvider.connectToDevice();
+        // Send a message to the connected device
+        bluetoothProvider.sendMessage("Hi ESP32");
+
+        // Stop scanning and cancel timeout timer
+        scanSubscription?.cancel();
+        timeoutTimer?.cancel();
+        print('Target device found and scanning stopped.');
+
+        // Show success message
+        AnimatedSnackBar.material(
+          'تم العثور على الجهاز المستهدف ,جهازك متصل بالبلوتوث',
+          type: AnimatedSnackBarType.success,
+          duration: Duration(seconds: 6),
+          mobileSnackBarPosition: MobileSnackBarPosition.bottom,
+        ).show(context);
       }
     });
 
-    // Wait for 60 seconds
-    await Future.delayed(Duration(seconds: 60));
-
-    // Stop scanning after 60 seconds if device not found
-    flutterBlue.stopScan();
-    if (scanSubscription != null) {
-      scanSubscription.cancel(); // Cancel the subscription if it's not null
-    }
-
-    if (!foundPeripheral) {
-      // Display snackbar if device not found
+    timeoutTimer = Timer(Duration(seconds: scanTimeout), () {
+      scanSubscription?.cancel();
+      flutterBlue.stopScan();
+      print('Scanning timed out. Target device not found.');
+      // Show error message
       AnimatedSnackBar.material(
-        'لم يتم العثور على لوح نقطة',
+        'لم يتم العثور على الجهاز المستهدف',
         type: AnimatedSnackBarType.error,
         duration: Duration(seconds: 6),
         mobileSnackBarPosition: MobileSnackBarPosition.bottom,
       ).show(context);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    final bluetoothProvider = Provider.of<BluetoothProvider>(context, listen: false);
+    bluetoothProvider.listenForMessages(); // Start listening for messages
+    if (!isDeviceConnected()) {
+      scanAndConnect();
     }
   }
 
-  void connectToDevice(BluetoothDevice device) {
-    device.connect().then((value) {
-      setState(() {
-        connectedDevice = device;
-      });
-      AnimatedSnackBar.material(
-        'جهازك متصل بلوح نقطة',
-        type: AnimatedSnackBarType.success,
-        duration: Duration(seconds: 6),
-        mobileSnackBarPosition: MobileSnackBarPosition.bottom,
-      ).show(context);
-    });
+  bool isDeviceConnected() {
+    final bluetoothProvider = Provider.of<BluetoothProvider>(context, listen: false);
+    return bluetoothProvider.connectedDevice != null;
   }
-  // Method to disconnect from the ESP32 device
- 
-
 
   @override
   Widget build(BuildContext context) {
