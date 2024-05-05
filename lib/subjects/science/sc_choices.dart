@@ -1,6 +1,10 @@
+import 'dart:convert';
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mypfe/BluetoothProvider.dart';
+import 'package:provider/provider.dart';
 
 class ScChoices extends StatefulWidget {
   final String questionId;
@@ -15,6 +19,9 @@ class ScChoices extends StatefulWidget {
 class _ScChoicesState extends State<ScChoices> {
   late Stream<DocumentSnapshot<Map<String, dynamic>>> _questionStream;
   late Stream<QuerySnapshot<Map<String, dynamic>>> _choicesStream;
+  late BluetoothProvider _bluetoothProvider; //
+  // cette ligne pour déclarer _choices
+  late List<String> _choices;
 
   late Future<void> _initializeStreams;
 
@@ -25,20 +32,16 @@ class _ScChoicesState extends State<ScChoices> {
   }
 
   Future<void> _initializeData() async {
-    // Récupérer l'ID de l'utilisateur actuellement connecté
+    _bluetoothProvider = Provider.of<BluetoothProvider>(context, listen: false);
+
     User? user = FirebaseAuth.instance.currentUser;
     String? userId = user?.uid;
 
-    // Définir manuellement l'identifiant de l'utilisateur
-    //String userId = 'amouna';
-
-    // Vérifier l'existence de la question dans la collection 'Science'
     final scSnapshot = await FirebaseFirestore.instance
         .collection('Science')
         .doc(widget.questionId)
         .get();
     if (scSnapshot.exists) {
-      // Si la question existe dans la collection 'Science'
       _questionStream = FirebaseFirestore.instance
           .collection('Science')
           .doc(widget.questionId)
@@ -49,7 +52,6 @@ class _ScChoicesState extends State<ScChoices> {
           .collection('choices')
           .snapshots();
     } else {
-      // Si la question n'existe pas dans la collection 'Science', la chercher dans la collection 'Users'
       _questionStream = FirebaseFirestore.instance
           .collection('Users')
           .doc(userId)
@@ -64,6 +66,22 @@ class _ScChoicesState extends State<ScChoices> {
           .collection('choices')
           .snapshots();
     }
+  }
+  //
+  Future<void> sendMessageToESP32(String question, List<String> choices) async {
+    try {
+      var message = {
+        'question': question,
+        'choices': choices,
+      };
+      await _bluetoothProvider.sendMessage(message);
+    } catch (e) {
+      print('Error sending message to ESP32: $e');
+    }
+  }
+
+  Future<String> waitForReceiptFromESP32() async {
+    return 'ReceiptReceived';
   }
 
   @override
@@ -166,12 +184,13 @@ class _ScChoicesState extends State<ScChoices> {
                           );
                         } else {
                           var choices = snapshot.data!.docs
-                              .map((doc) => doc.data())
+                              .map((doc) => doc.data()['answer'] as String)
                               .toList();
+                          // Store choices in the _choices variable
+                          _choices = choices; // 
 
                           return Column(
-                            children: choices.map((choiceData) {
-                              var choice = choiceData['answer'] as String;
+                            children: choices.map((choice) {
                               return Container(
                                 margin: const EdgeInsets.symmetric(vertical: 8),
                                 decoration: BoxDecoration(
@@ -195,15 +214,14 @@ class _ScChoicesState extends State<ScChoices> {
                     ),
                     ElevatedButton(
                       onPressed: () async {
-                        // Create a new document in the 'historique' collection
                         String? userId = FirebaseAuth.instance.currentUser?.uid;
                         if (userId != null) {
                           DocumentSnapshot<Map<String, dynamic>>
                               questionSnapshot;
                           var questionData;
                           String question = '';
+                          List<String> choices = [];
 
-                          // Check if the question exists in the 'Din' collection
                           var dinQuestionSnapshot = await FirebaseFirestore
                               .instance
                               .collection('Science')
@@ -212,7 +230,6 @@ class _ScChoicesState extends State<ScChoices> {
                           if (dinQuestionSnapshot.exists) {
                             questionSnapshot = dinQuestionSnapshot;
                           } else {
-                            // Check if the question exists in the 'question_added_din' collection under the user
                             questionSnapshot = await FirebaseFirestore.instance
                                 .collection('Users')
                                 .doc(userId)
@@ -226,19 +243,31 @@ class _ScChoicesState extends State<ScChoices> {
                             question = questionData?['question'] ?? '';
                           }
 
-                          // Add the question to the 'historique' collection
                           await FirebaseFirestore.instance
                               .collection('Users')
                               .doc(userId)
                               .collection('historique')
                               .add({
                             'question': question,
-                            'response': '', // Set empty response initially
-                            'responseValidation':
-                                '', // Set empty response validation initially
+                            'response': '',
+                            'responseValidation': '',
                           });
+                          
 
-                          // Navigate back after adding the question to historique
+                          await sendMessageToESP32(question, _choices);
+
+                          String receipt = await waitForReceiptFromESP32();
+
+                          if (receipt == "ReceiptReceived") {
+                            AnimatedSnackBar.material(
+                              '!تم الإرسال بنجاح',
+                              type: AnimatedSnackBarType.success,
+                              duration: Duration(seconds: 4),
+                              mobileSnackBarPosition:
+                                  MobileSnackBarPosition.bottom,
+                            ).show(context);
+                          }
+
                           Navigator.pop(context);
                         }
                       },
@@ -246,11 +275,14 @@ class _ScChoicesState extends State<ScChoices> {
                         backgroundColor: MaterialStateProperty.all<Color>(
                             const Color(0xFF79C5F7)),
                       ),
-                      child: const Text('إرسال',
-                          style: TextStyle(
-                              fontSize: 20,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold)),
+                      child: const Text(
+                        'إرسال',
+                        style: TextStyle(
+                          fontSize: 20,
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
                     ),
                   ],
                 ),

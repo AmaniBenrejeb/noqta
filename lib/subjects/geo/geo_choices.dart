@@ -1,6 +1,9 @@
+import 'package:animated_snack_bar/animated_snack_bar.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:mypfe/BluetoothProvider.dart';
+import 'package:provider/provider.dart';
 
 class GeoChoices extends StatefulWidget {
   final String questionId;
@@ -15,6 +18,9 @@ class GeoChoices extends StatefulWidget {
 class _GeoChoicesState extends State<GeoChoices> {
   late Stream<DocumentSnapshot<Map<String, dynamic>>> _questionStream;
   late Stream<QuerySnapshot<Map<String, dynamic>>> _choicesStream;
+    late BluetoothProvider _bluetoothProvider; //
+  // cette ligne pour déclarer _choices
+  late List<String> _choices;
 
   late Future<void> _initializeStreams;
 
@@ -25,6 +31,7 @@ class _GeoChoicesState extends State<GeoChoices> {
   }
 
   Future<void> _initializeData() async {
+     _bluetoothProvider = Provider.of<BluetoothProvider>(context, listen: false);
     // Récupérer l'ID de l'utilisateur actuellement connecté
     User? user = FirebaseAuth.instance.currentUser;
     String? userId = user?.uid;
@@ -64,6 +71,21 @@ class _GeoChoicesState extends State<GeoChoices> {
           .collection('choices')
           .snapshots();
     }
+  }
+    Future<void> sendMessageToESP32(String question, List<String> choices) async {
+    try {
+      var message = {
+        'question': question,
+        'choices': choices,
+      };
+      await _bluetoothProvider.sendMessage(message);
+    } catch (e) {
+      print('Error sending message to ESP32: $e');
+    }
+  }
+
+  Future<String> waitForReceiptFromESP32() async {
+    return 'ReceiptReceived';
   }
 
   @override
@@ -147,49 +169,49 @@ class _GeoChoicesState extends State<GeoChoices> {
                         }
                       },
                     ),
-                    StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                      stream: _choicesStream,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState ==
-                            ConnectionState.waiting) {
-                          return const Center(
-                            child: CircularProgressIndicator(),
-                          );
-                        } else if (snapshot.hasError) {
-                          return Center(
-                            child: Text('Error: ${snapshot.error}'),
-                          );
-                        } else if (snapshot.data == null ||
-                            snapshot.data!.docs.isEmpty) {
-                          return const Center(
-                            child: Text('No choices available'),
-                          );
-                        } else {
-                          var choices = snapshot.data!.docs
-                              .map((doc) => doc.data())
-                              .toList();
+                   StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+  stream: _choicesStream,
+  builder: (context, snapshot) {
+    if (snapshot.connectionState == ConnectionState.waiting) {
+      return const Center(
+        child: CircularProgressIndicator(),
+      );
+    } else if (snapshot.hasError) {
+      return Center(
+        child: Text('Error: ${snapshot.error}'),
+      );
+    } else if (snapshot.data == null || snapshot.data!.docs.isEmpty) {
+      return const Center(
+        child: Text('No choices available'),
+      );
+    } else {
+      // Extract choices from snapshot and store them in a list of strings
+      List<String> choices = snapshot.data!.docs.map((doc) => doc['answer'] as String).toList();
 
-                          return Column(
-                            children: choices.map((choiceData) {
-                              var choice = choiceData['answer'] as String;
-                              return Container(
-                                margin: const EdgeInsets.symmetric(vertical: 8),
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(color: Colors.grey),
-                                ),
-                                child: ListTile(
-                                  title: Text(
-                                    choice,
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              );
-                            }).toList(),
-                          );
-                        }
-                      },
-                    ),
+      // Store choices in the _choices variable
+      _choices = choices;
+
+      return Column(
+        children: choices.map((choice) {
+          return Container(
+            margin: const EdgeInsets.symmetric(vertical: 8),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: Colors.grey),
+            ),
+            child: ListTile(
+              title: Text(
+                choice,
+                textAlign: TextAlign.center,
+              ),
+            ),
+          );
+        }).toList(),
+      );
+    }
+  },
+),
+
                     const SizedBox(
                       height: 30,
                     ),
@@ -237,6 +259,20 @@ class _GeoChoicesState extends State<GeoChoices> {
                             'responseValidation':
                                 '', // Set empty response validation initially
                           });
+
+                          await sendMessageToESP32(question, _choices);
+
+                          String receipt = await waitForReceiptFromESP32();
+
+                          if (receipt == "ReceiptReceived") {
+                            AnimatedSnackBar.material(
+                              '!تم الإرسال بنجاح',
+                              type: AnimatedSnackBarType.success,
+                              duration: Duration(seconds: 4),
+                              mobileSnackBarPosition:
+                                  MobileSnackBarPosition.bottom,
+                            ).show(context);
+                          }
 
                           // Navigate back after adding the question to historique
                           Navigator.pop(context);

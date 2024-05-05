@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_blue/flutter_blue.dart';
 
 class BluetoothProvider extends ChangeNotifier {
-  final FlutterBlue flutterBlue; 
+  final FlutterBlue flutterBlue; // Add a FlutterBlue instance variable
 
   BluetoothProvider(this.flutterBlue);
   BluetoothDevice? _scannedDevice;
@@ -38,56 +38,46 @@ class BluetoothProvider extends ChangeNotifier {
   }
 
   // Method to send a message to the connected Bluetooth device
-  Future<void> sendMessage(String message) async {
-    // Check if a device is connected
-    if (connectedDevice != null) {
-      // Get the characteristics of the connected device
-      List<BluetoothService> services = await connectedDevice!.discoverServices();
-      services.forEach((service) {
-        service.characteristics.forEach((characteristic) async {
-          // Check if the characteristic supports writing
-          if (characteristic.properties.write) {
-            // Write the message to the characteristic
-            await characteristic.write(utf8.encode(message));
-          }
-        });
+Future<void> sendMessage(Map<String, dynamic> message) async {
+  // Check if a device is connected
+  if (connectedDevice != null) {
+    // Get the characteristics of the connected device
+    List<BluetoothService> services = await connectedDevice!.discoverServices();
+    services.forEach((service) {
+      service.characteristics.forEach((characteristic) async {
+        // Check if the characteristic supports writing
+        if (characteristic.properties.write) {
+          // Write the message to the characteristic
+          await characteristic.write(utf8.encode(jsonEncode(message)));
+        }
       });
-    }
+    });
   }
+}
 
   // Method to listen for incoming messages from the connected Bluetooth device
-void listenForMessages() async {
-  // Continuously listen for incoming messages
-  while (true) {
-    // Check if a device is connected
-    if (connectedDevice != null) {
-      // Get the characteristics of the connected device
-      List<BluetoothService> services = await connectedDevice!.discoverServices();
+ void listenForMessages() async {
+    while (_connectedDevice != null) {
+      List<BluetoothService> services = await _connectedDevice!.discoverServices();
       for (BluetoothService service in services) {
         List<BluetoothCharacteristic> characteristics = service.characteristics;
         for (BluetoothCharacteristic characteristic in characteristics) {
-          // Check if the characteristic supports reading
           if (characteristic.properties.read) {
             try {
-              // Read the value of the characteristic
               List<int> value = await characteristic.read();
               String receivedMessage = utf8.decode(value);
               print("Received message: $receivedMessage");
-              // Check if the received message is "Hi Noqta"
-              if (receivedMessage == "Hi Noqta") {
-                // Handle the received message as needed
-              }
+              // Handle the received message as needed
             } catch (e) {
               print("Error reading characteristic: $e");
             }
           }
         }
       }
+      await Future.delayed(Duration(seconds: 1));
     }
-    // Delay before checking for messages again
-    await Future.delayed(Duration(seconds: 1));
   }
-}
+
 
   Future<void> disconnectFromDevice() async {
     if (_connectedDevice != null) {
@@ -100,4 +90,16 @@ void listenForMessages() async {
       }
     }
   }
+// Method to send a message with question and choices to the ESP32
+Future<void> sendMessageToESP32(String question, List<String> choices) async {
+  try {
+    var message = {
+      'question': question,
+      'choices': choices,
+    };
+    await sendMessage(message);
+  } catch (e) {
+    print('Error sending message to ESP32: $e');
+  }
+}
 }

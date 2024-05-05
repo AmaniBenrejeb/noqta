@@ -62,8 +62,6 @@ class _HomePageState extends State<HomePage> {
             Provider.of<BluetoothProvider>(context, listen: false);
         bluetoothProvider.scannedDevice = scanResult.device;
         await bluetoothProvider.connectToDevice();
-        // Send a message to the connected device
-        bluetoothProvider.sendMessage("Hi ESP32");
 
         // Stop scanning and cancel timeout timer
         scanSubscription?.cancel();
@@ -74,7 +72,7 @@ class _HomePageState extends State<HomePage> {
         AnimatedSnackBar.material(
           'تم العثور على الجهاز المستهدف ,جهازك متصل بالبلوتوث',
           type: AnimatedSnackBarType.success,
-          duration: Duration(seconds: 6),
+          duration: Duration(seconds: 4),
           mobileSnackBarPosition: MobileSnackBarPosition.bottom,
         ).show(context);
       }
@@ -88,7 +86,7 @@ class _HomePageState extends State<HomePage> {
       AnimatedSnackBar.material(
         'لم يتم العثور على الجهاز المستهدف',
         type: AnimatedSnackBarType.error,
-        duration: Duration(seconds: 6),
+        duration: Duration(seconds: 4),
         mobileSnackBarPosition: MobileSnackBarPosition.bottom,
       ).show(context);
     });
@@ -97,7 +95,8 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     super.initState();
-    final bluetoothProvider = Provider.of<BluetoothProvider>(context, listen: false);
+    final bluetoothProvider =
+        Provider.of<BluetoothProvider>(context, listen: false);
     bluetoothProvider.listenForMessages(); // Start listening for messages
     if (!isDeviceConnected()) {
       scanAndConnect();
@@ -105,9 +104,11 @@ class _HomePageState extends State<HomePage> {
   }
 
   bool isDeviceConnected() {
-    final bluetoothProvider = Provider.of<BluetoothProvider>(context, listen: false);
+    final bluetoothProvider =
+        Provider.of<BluetoothProvider>(context, listen: false);
     return bluetoothProvider.connectedDevice != null;
   }
+
 
   @override
   Widget build(BuildContext context) {
